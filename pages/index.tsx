@@ -9,19 +9,19 @@ export default function Home() {
             </div>
             <div>
                 <button
-                    className="bg-gray-400 rounded-md px-3 py-1 m-3 ml-0"
+                    className="bg-gray-400 rounded-md px-3 py-1 m-1.5 ml-0"
                     onClick={() => changeTheme("light-theme")}
                 >
                     Default
                 </button>
                 <button
-                    className="bg-gray-400 rounded-md px-3 py-1 m-3"
+                    className="bg-gray-400 rounded-md px-3 py-1 m-1.5 ml-0"
                     onClick={() => changeTheme("dim-theme")}
                 >
                     Dim
                 </button>
                 <button
-                    className="bg-gray-400 rounded-md px-3 py-1 m-3"
+                    className="bg-gray-400 rounded-md px-3 py-1 m-1.5 ml-0"
                     onClick={() => changeTheme("dark-theme")}
                 >
                     Lights Out
@@ -29,39 +29,39 @@ export default function Home() {
             </div>
             <div>
                 <button
-                    className="rounded-md px-3 py-1 m-3 ml-0 bg-blue"
+                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-blue"
                     onClick={() => changeTheme("blue-accent")}
                 >
                     Blue
                 </button>
                 <button
-                    className="rounded-md px-3 py-1 m-3 bg-yellow"
+                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-yellow"
                     onClick={() => changeTheme("yellow-accent")}
                 >
                     Yellow
                 </button>
                 <button
-                    className="rounded-md px-3 py-1 m-3 bg-pink"
+                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-pink"
                     onClick={() => changeTheme("pink-accent")}
                 >
                     Pink
                 </button>
                 <button
-                    className="rounded-md px-3 py-1 m-3 bg-purple"
+                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-purple"
                     onClick={() => changeTheme("purple-accent")}
                 >
                     Purple
                 </button>
 
                 <button
-                    className="rounded-md px-3 py-1 m-3 bg-orange"
+                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-orange"
                     onClick={() => changeTheme("orange-accent")}
                 >
                     Orange
                 </button>
 
                 <button
-                    className=" rounded-md px-3 py-1 m-3 bg-green"
+                    className=" rounded-md px-3 py-1 m-1.5 ml-0 bg-green"
                     onClick={() => changeTheme("green-accent")}
                 >
                     Green

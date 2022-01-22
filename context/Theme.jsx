@@ -5,36 +5,32 @@ const ThemeContext = createContext(null);
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState();
-    const [accent, setAccent] = useState();
+    const [theme, setTheme] = useState("light-theme");
+    const [accent, setAccent] = useState("blue-accent");
 
-    const changeTheme = (theme) => {
-        theme.includes("theme") ? setTheme(theme) : setAccent(theme);
+    const changeTheme = (input) => {
+        input.includes("theme") ? setTheme(input) : setAccent(input);
+    };
+
+    const updateTheme = (input) => {
+        const newTheme = input == "theme" ? theme : accent;
+        Array.from(document.documentElement.classList).map((item) => {
+            item.includes(input) &&
+                document.documentElement.classList.remove(item);
+        });
+        document.documentElement.classList.add(newTheme);
+        localStorage.setItem(input, newTheme);
     };
 
     useEffect(() => {
-        changeTheme(localStorage.getItem("theme"));
-        changeTheme(localStorage.getItem("accent"));
+        localStorage.getItem("theme") &&
+            changeTheme(localStorage.getItem("theme"));
+        localStorage.getItem("accent") &&
+            changeTheme(localStorage.getItem("accent"));
     }, []);
 
-    useEffect(() => {
-        Array.from(document.documentElement.classList).map((item) => {
-            console.log;
-            item.includes("theme") &&
-                document.documentElement.classList.remove(item);
-        });
-        document.documentElement.classList.add(theme);
-        localStorage.setItem("theme", theme);
-    }, [theme]);
-
-    useEffect(() => {
-        Array.from(document.documentElement.classList).map((item) => {
-            item.includes("accent") &&
-                document.documentElement.classList.remove(item);
-        });
-        document.documentElement.classList.add(accent);
-        localStorage.setItem("accent", accent);
-    }, [accent]);
+    useEffect(() => updateTheme("theme"), [theme]);
+    useEffect(() => updateTheme("accent"), [accent]);
 
     return (
         <ThemeContext.Provider value={{ theme, accent, changeTheme }}>
