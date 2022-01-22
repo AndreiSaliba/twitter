@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-accent {
+    @apply blue:bg-blue yellow:bg-yellow pink:bg-pink purple:bg-purple orange:bg-orange green:bg-green text-white;
+}
+
+.text-accent {
+    @apply blue:text-blue yellow:text-yellow pink:text-pink purple:text-purple orange:text-orange green:text-green text-white;
+}
