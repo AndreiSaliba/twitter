@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useTheme } from "../context/Theme";
+import { useTheme } from "@context/Theme";
 
 export default function Theme() {
     const { changeTheme } = useTheme();

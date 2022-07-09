@@ -24,7 +24,6 @@ export const ThemeProvider = ({ children }) => {
     };
 
     const updateTheme = (input: ThemeType) => {
-        console.log(input, theme, accent);
         const newTheme = input == "theme" ? theme : accent;
         Array.from(document.documentElement.classList).forEach((item) => {
             item.includes(input) &&
@@ -37,7 +36,11 @@ export const ThemeProvider = ({ children }) => {
     useEffect(() => {
         localStorage.getItem("theme")
             ? changeTheme(localStorage.getItem("theme") as Theme)
-            : changeTheme("dark-theme");
+            : changeTheme(
+                  !window?.matchMedia("(prefers-color-scheme: dark)").matches
+                      ? "light-theme"
+                      : "dark-theme"
+              );
         localStorage.getItem("accent")
             ? changeTheme(localStorage.getItem("accent") as Accent)
             : changeTheme("blue-accent");
