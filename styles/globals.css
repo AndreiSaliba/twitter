@@ -3,9 +3,13 @@
 @tailwind utilities;
 
 .bg-accent {
-    @apply blue:bg-blue yellow:bg-yellow pink:bg-pink purple:bg-purple orange:bg-orange green:bg-green text-white;
+    @apply text-white blue:bg-blue yellow:bg-yellow pink:bg-pink purple:bg-purple orange:bg-orange green:bg-green;
 }
 
 .text-accent {
-    @apply blue:text-blue yellow:text-yellow pink:text-pink purple:text-purple orange:text-orange green:text-green text-white;
+    @apply text-white blue:text-blue yellow:text-yellow pink:text-pink purple:text-purple orange:text-orange green:text-green;
+}
+
+.default-style {
+    @apply w-screen h-screen p-4 light:bg-white dim:bg-dim dark:bg-black light:text-black dim:text-white dark:text-white;
 }

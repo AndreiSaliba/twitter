@@ -1,8 +1,4 @@
-const {
-    themeVariants,
-    prefersLight,
-    prefersDark,
-} = require("tailwindcss-theme-variants");
+const { themeVariants } = require("tailwindcss-theme-variants");
 
 module.exports = {
     content: [
@@ -12,6 +8,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                dim: "#15202b",
                 blue: "#1d9bf0",
                 yellow: "#ffd400",
                 pink: "#f91880",
