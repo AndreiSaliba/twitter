@@ -11,5 +11,5 @@
 }
 
 .default-style {
-    @apply w-screen h-screen p-4 light:bg-white dim:bg-dim dark:bg-black light:text-black dim:text-white dark:text-white;
+    @apply w-screen min-h-screen h-auto p-4 light:bg-white dim:bg-dim dark:bg-black light:text-black dim:text-white dark:text-white;
 }

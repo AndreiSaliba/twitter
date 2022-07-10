@@ -16,6 +16,9 @@ module.exports = {
                 orange: "#ff7a00",
                 green: "#00ba7c",
             },
+            screens: {
+                xs: { max: "440px" },
+            },
         },
     },
     plugins: [
