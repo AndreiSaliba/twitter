@@ -10,19 +10,19 @@ export default function Theme() {
             </div>
             <div>
                 <button
-                    className="bg-gray-400 rounded-md px-3 py-1 m-1.5 ml-0"
+                    className="m-1.5 ml-0 rounded-md bg-gray-400 px-3 py-1"
                     onClick={() => changeTheme("light-theme")}
                 >
                     Default
                 </button>
                 <button
-                    className="bg-gray-400 rounded-md px-3 py-1 m-1.5 ml-0"
+                    className="m-1.5 ml-0 rounded-md bg-gray-400 px-3 py-1"
                     onClick={() => changeTheme("dim-theme")}
                 >
                     Dim
                 </button>
                 <button
-                    className="bg-gray-400 rounded-md px-3 py-1 m-1.5 ml-0"
+                    className="m-1.5 ml-0 rounded-md bg-gray-400 px-3 py-1"
                     onClick={() => changeTheme("dark-theme")}
                 >
                     Lights Out
@@ -30,48 +30,48 @@ export default function Theme() {
             </div>
             <div>
                 <button
-                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-blue"
+                    className="m-1.5 ml-0 rounded-md bg-blue px-3 py-1"
                     onClick={() => changeTheme("blue-accent")}
                 >
                     Blue
                 </button>
                 <button
-                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-yellow"
+                    className="m-1.5 ml-0 rounded-md bg-yellow px-3 py-1"
                     onClick={() => changeTheme("yellow-accent")}
                 >
                     Yellow
                 </button>
                 <button
-                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-pink"
+                    className="m-1.5 ml-0 rounded-md bg-pink px-3 py-1"
                     onClick={() => changeTheme("pink-accent")}
                 >
                     Pink
                 </button>
                 <button
-                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-purple"
+                    className="m-1.5 ml-0 rounded-md bg-purple px-3 py-1"
                     onClick={() => changeTheme("purple-accent")}
                 >
                     Purple
                 </button>
 
                 <button
-                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-orange"
+                    className="m-1.5 ml-0 rounded-md bg-orange px-3 py-1"
                     onClick={() => changeTheme("orange-accent")}
                 >
                     Orange
                 </button>
 
                 <button
-                    className="rounded-md px-3 py-1 m-1.5 ml-0 bg-green"
+                    className="m-1.5 ml-0 rounded-md bg-green px-3 py-1"
                     onClick={() => changeTheme("green-accent")}
                 >
                     Green
                 </button>
             </div>
             <div>
-                <Link href="/login">
-                    <button className="rounded-md px-3 py-1 m-1.5 ml-0 bg-gray-400">
-                        Login Page
+                <Link href="/">
+                    <button className="m-1.5 ml-0 rounded-md bg-gray-400 px-3 py-1">
+                        Landing Page
                     </button>
                 </Link>
             </div>
