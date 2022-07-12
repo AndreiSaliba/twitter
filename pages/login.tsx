@@ -1,8 +1,16 @@
+import { useForm } from "react-hook-form";
 import Link from "next/link";
 import Input from "@components/Input";
 import Button from "@components/Button";
 
 export default function Login() {
+    const { register, handleSubmit, formState } = useForm({
+        mode: "onBlur",
+        reValidateMode: "onChange",
+    });
+
+    const onSubmit = (data) => console.log(data);
+
     return (
         <div className="default-style flex h-screen w-screen justify-center">
             <div className="mt-20 flex min-w-[350px] flex-col items-center">
@@ -19,20 +27,22 @@ export default function Login() {
                 </span>
 
                 <Button
-                    style="rounded"
+                    variant="rounded"
                     color="white"
-                    text="Continue with Google"
                     authProvider="Google"
                     className="mb-5"
-                />
+                >
+                    Continue with Google
+                </Button>
 
                 <Button
-                    style="rounded"
+                    variant="rounded"
                     color="white"
-                    text="Continue with Github"
                     authProvider="Github"
                     className="mb-5"
-                />
+                >
+                    Continue with Github
+                </Button>
 
                 <div className="relative mb-2 flex w-80 items-center">
                     <div className="flex-grow border-t border-[#2f3336] light:border-[#cfd9de]"></div>
@@ -40,34 +50,63 @@ export default function Login() {
                     <div className="flex-grow border-t border-[#2f3336] light:border-[#cfd9de]"></div>
                 </div>
 
-                <Input
-                    style="floating"
-                    type="email"
-                    placeholder="Email or username"
-                    className="mb-3"
-                />
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="max-w-80 flex flex-col"
+                >
+                    <Input
+                        {...register("email", {
+                            required: true,
+                        })}
+                        type="email"
+                        variant="floating"
+                        placeholder="Email or username"
+                    />
 
-                <Input
-                    style="floating"
-                    type="password"
-                    placeholder="Password"
-                />
+                    <Input
+                        {...register("password", {
+                            required: true,
+                            maxLength: {
+                                value: 250,
+                                message:
+                                    "Please enter a password with less than 250 characters.",
+                            },
+                        })}
+                        type="password"
+                        variant="floating"
+                        placeholder="Password"
+                        className="mt-3"
+                        error={
+                            formState?.errors?.password !== undefined &&
+                            (formState?.errors?.password
+                                .type as unknown as string) != "required"
+                        }
+                    />
+                    {formState?.errors?.password && (
+                        <span className="w-80 text-sm text-[#f4212e]">
+                            {formState?.errors?.password.message}
+                        </span>
+                    )}
 
-                <Button
-                    style="rounded"
-                    color="white-black"
-                    text="Log In"
-                    className="mt-5 mb-5"
-                />
+                    <Button
+                        type="submit"
+                        variant="rounded"
+                        color="white-black"
+                        className="mt-5 mb-5"
+                    >
+                        Log In
+                    </Button>
+                </form>
 
                 <Link href="/login">
                     <a>
                         <Button
-                            text="Forgot password?"
-                            style="rounded"
+                            variant="rounded"
                             color="transparent"
                             className="mb-10"
-                        />
+                        >
+                            Forgot password?
+                        </Button>
                     </a>
                 </Link>
 

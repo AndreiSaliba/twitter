@@ -18,20 +18,22 @@ export default function Home() {
                 </span>
 
                 <Button
-                    style="rounded"
+                    variant="rounded"
                     color="white"
-                    text="Sign up with Google"
                     authProvider="Google"
                     className="mb-5"
-                />
+                >
+                    Sign up with Google
+                </Button>
 
                 <Button
-                    style="rounded"
+                    variant="rounded"
                     color="white"
-                    text="Sign up with Github"
                     authProvider="Github"
                     className="mb-2"
-                />
+                >
+                    Sign up with Github
+                </Button>
 
                 <div className="relative mb-2 flex w-80 items-center">
                     <div className="flex-grow border-t border-[#2f3336] light:border-[#cfd9de]"></div>
@@ -42,11 +44,12 @@ export default function Home() {
                 <Link href="/signup">
                     <a>
                         <Button
-                            style="rounded"
+                            variant="rounded"
                             color="blue"
-                            text="Sign up with email"
                             className="mb-16"
-                        />
+                        >
+                            Sign up with email
+                        </Button>
                     </a>
                 </Link>
 
@@ -57,12 +60,12 @@ export default function Home() {
                 <Link href="/login">
                     <a>
                         <Button
-                            text="Sign in"
-                            style="rounded"
-                            color="transparent"
-                            textColor="blue"
+                            variant="rounded"
+                            color="transparent-blue"
                             className="mb-16"
-                        />
+                        >
+                            Sign in
+                        </Button>
                     </a>
                 </Link>
             </div>

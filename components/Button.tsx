@@ -1,21 +1,27 @@
-type props = {
-    text: string;
-    style: "rounded";
-    color: "white" | "blue" | "transparent" | "white-black";
-    textColor?: "blue";
-    authProvider?: "Google" | "Github";
-    className?: string;
-};
+import { FC, ButtonHTMLAttributes } from "react";
 
-export default function Button({
-    style,
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+    variant: "rounded";
+    color:
+        | "white"
+        | "blue"
+        | "transparent"
+        | "transparent-blue"
+        | "white-black";
+    authProvider?: "Google" | "Github";
+    children?: string;
+    className?: string;
+}
+
+const Button: FC<Props> = ({
+    variant,
     color,
-    textColor,
-    text,
     authProvider,
     className,
-}: props) {
-    switch (style) {
+    children,
+    ...rest
+}) => {
+    switch (variant) {
         case "rounded":
             let buttonColor;
             switch (color) {
@@ -27,11 +33,12 @@ export default function Button({
                     buttonColor = "bg-blue p-1.5 hover:bg-[#1a8cd8] text-white";
                     break;
                 case "transparent":
-                    buttonColor = `border border-[#536471] light:border-[#dadce0] ${
-                        textColor === "blue"
-                            ? "text-blue hover:bg-[#031018] light:hover:bg-[#e8f5fd]"
-                            : "hover:bg-[#181919] light:hover:bg-[#e6e7e7]"
-                    }`;
+                    buttonColor =
+                        "border border-[#536471] light:border-[#dadce0] hover:bg-[#181919] light:hover:bg-[#e6e7e7]";
+                    break;
+                case "transparent-blue":
+                    buttonColor =
+                        "border border-[#536471] light:border-[#dadce0] hover:bg-[#031018] light:hover:bg-[#e8f5fd] text-blue";
                     break;
                 case "white-black":
                     buttonColor =
@@ -84,12 +91,15 @@ export default function Button({
             return (
                 <button
                     className={`w-80 rounded-full p-1.5 ${buttonColor} ${className}`}
+                    {...rest}
                 >
                     <span className="flex flex-row items-center justify-center font-semibold">
                         {authProvider && authProviderLogo}
-                        <span className={`${textColor}`}>{text}</span>
+                        <span>{children}</span>
                     </span>
                 </button>
             );
     }
-}
+};
+
+export default Button;

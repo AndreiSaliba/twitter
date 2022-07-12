@@ -11,9 +11,9 @@
 }
 
 .default-style {
-    @apply w-screen min-h-screen h-auto p-4 light:bg-white dim:bg-dim dark:bg-black light:text-black dim:text-white dark:text-white;
+    @apply h-auto min-h-screen w-screen p-4 light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
 }
 
-.peer:not(:placeholder-shown) ~ label {
-    @apply transform scale-80 -translate-y-3;
+#floating:not(:placeholder-shown) ~ label {
+    @apply -translate-y-3 scale-80 transform;
 }
