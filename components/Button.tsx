@@ -1,15 +1,14 @@
-import { FC, ButtonHTMLAttributes } from "react";
+import React, { FC, ButtonHTMLAttributes } from "react";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant: "rounded";
     color:
-        | "white"
         | "blue"
         | "transparent"
         | "transparent-blue"
+        | "white"
         | "white-black";
     authProvider?: "Google" | "Github";
-    children?: string;
     className?: string;
 }
 

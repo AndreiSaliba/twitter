@@ -1,6 +1,6 @@
 import { useState, forwardRef, InputHTMLAttributes } from "react";
 
-type passwordState = "other" | "shown" | "hidden";
+type passwordState = "shown" | "hidden" | "other";
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
     variant: "floating";
@@ -10,10 +10,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = forwardRef<HTMLInputElement, Props>(
-    (
-        { type, variant, placeholder, className, error = false, ...rest },
-        ref
-    ) => {
+    ({ type, variant, placeholder, className, error, ...rest }, ref) => {
         const [revealPassword, setRevealPassword] = useState<passwordState>(
             type === "password" ? "hidden" : "other"
         );

@@ -1,10 +1,21 @@
-import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { FC } from "react";
+import { useForm } from "react-hook-form";
 import Input from "@components/Input";
 import Button from "@components/Button";
 
-export default function Signup() {
-    const { register, handleSubmit, formState } = useForm({
+interface FormValues {
+    username: string;
+    email: string;
+    password: string;
+}
+
+const Signup: FC = () => {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormValues>({
         mode: "onBlur",
         reValidateMode: "onChange",
     });
@@ -56,12 +67,32 @@ export default function Signup() {
                     autoComplete="off"
                 >
                     <Input
-                        {...register("username", { required: true })}
+                        {...register("username", {
+                            required: true,
+                            pattern: {
+                                value: /^[a-zA-Z0-9_]+$/,
+                                message:
+                                    "Your username can only contain letters, numbers and '_'",
+                            },
+                            maxLength: {
+                                value: 15,
+                                message:
+                                    "Your username must be shorter than 15 characters.",
+                            },
+                        })}
                         type="text"
                         variant="floating"
                         placeholder="Username"
-                        className="mb-3"
+                        error={
+                            errors?.username &&
+                            errors?.username.type !== "required"
+                        }
                     />
+                    {errors?.username && (
+                        <span className="w-80 text-sm text-[#f4212e]">
+                            {errors?.username.message}
+                        </span>
+                    )}
 
                     <Input
                         {...register("email", {
@@ -73,16 +104,15 @@ export default function Signup() {
                         })}
                         type="email"
                         variant="floating"
-                        placeholder="Email or username"
+                        placeholder="Email"
+                        className="mt-3"
                         error={
-                            formState?.errors?.email !== undefined &&
-                            (formState?.errors?.email
-                                .type as unknown as string) != "required"
+                            errors?.email && errors?.email.type !== "required"
                         }
                     />
-                    {formState?.errors?.email && (
+                    {errors?.email && (
                         <span className="w-80 text-sm text-[#f4212e]">
-                            {formState?.errors?.email.message}
+                            {errors?.email.message}
                         </span>
                     )}
 
@@ -105,14 +135,13 @@ export default function Signup() {
                         placeholder="Password"
                         className="mt-3"
                         error={
-                            formState?.errors?.password !== undefined &&
-                            (formState?.errors?.password
-                                .type as unknown as string) != "required"
+                            errors?.password &&
+                            errors?.password.type !== "required"
                         }
                     />
-                    {formState?.errors?.password && (
+                    {errors?.password && (
                         <span className="w-80 text-sm text-[#f4212e]">
-                            {formState?.errors?.password.message}
+                            {errors?.password.message}
                         </span>
                     )}
 
@@ -135,4 +164,6 @@ export default function Signup() {
             </div>
         </div>
     );
-}
+};
+
+export default Signup;

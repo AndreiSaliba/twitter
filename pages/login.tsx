@@ -1,10 +1,20 @@
-import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { FC } from "react";
+import { useForm } from "react-hook-form";
 import Input from "@components/Input";
 import Button from "@components/Button";
 
-export default function Login() {
-    const { register, handleSubmit, formState } = useForm({
+interface FormValues {
+    email: string;
+    password: string;
+}
+
+const Login: FC = () => {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormValues>({
         mode: "onBlur",
         reValidateMode: "onChange",
     });
@@ -77,14 +87,13 @@ export default function Login() {
                         placeholder="Password"
                         className="mt-3"
                         error={
-                            formState?.errors?.password !== undefined &&
-                            (formState?.errors?.password
-                                .type as unknown as string) != "required"
+                            errors?.password &&
+                            errors?.password.type !== "required"
                         }
                     />
-                    {formState?.errors?.password && (
+                    {errors?.password && (
                         <span className="w-80 text-sm text-[#f4212e]">
-                            {formState?.errors?.password.message}
+                            {errors?.password.message}
                         </span>
                     )}
 
@@ -98,7 +107,7 @@ export default function Login() {
                     </Button>
                 </form>
 
-                <Link href="/login">
+                <Link href="">
                     <a>
                         <Button
                             variant="rounded"
@@ -119,4 +128,6 @@ export default function Login() {
             </div>
         </div>
     );
-}
+};
+
+export default Login;

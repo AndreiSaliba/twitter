@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { FC } from "react";
 import Button from "@components/Button";
 
-export default function Home() {
+const Landing: FC = () => {
     return (
         <div className="default-style flex h-screen w-screen justify-center">
             <div className="mt-20 flex min-w-[350px] flex-col items-center">
@@ -71,4 +72,6 @@ export default function Home() {
             </div>
         </div>
     );
-}
+};
+
+export default Landing;

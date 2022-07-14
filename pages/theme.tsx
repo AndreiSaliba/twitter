@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { FC } from "react";
 import { useTheme } from "@context/Theme";
 
-export default function Theme() {
+const Theme: FC = () => {
     const { changeTheme } = useTheme();
     return (
         <div className="default-style">
@@ -77,4 +78,6 @@ export default function Theme() {
             </div>
         </div>
     );
-}
+};
+
+export default Theme;
