@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { FC } from "react";
+import { useAuth } from "@context/Auth";
 import Button from "@components/Button";
 
 const Landing: FC = () => {
+    const { logInWithProvider } = useAuth();
+    
     return (
         <div className="default-style flex h-screen w-screen justify-center">
             <div className="mt-20 flex min-w-[350px] flex-col items-center">
@@ -23,6 +26,7 @@ const Landing: FC = () => {
                     color="white"
                     authProvider="Google"
                     className="mb-5"
+                    onClick={() => logInWithProvider("google")}
                 >
                     Sign up with Google
                 </Button>
@@ -32,6 +36,7 @@ const Landing: FC = () => {
                     color="white"
                     authProvider="Github"
                     className="mb-2"
+                    onClick={() => logInWithProvider("github")}
                 >
                     Sign up with Github
                 </Button>

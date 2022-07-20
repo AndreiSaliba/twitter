@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
+import { useAuth } from "@context/Auth";
 import Input from "@components/Input";
 import Button from "@components/Button";
 
@@ -19,7 +20,9 @@ const Login: FC = () => {
         reValidateMode: "onChange",
     });
 
-    const onSubmit = (data) => console.log(data);
+    const { logIn, logInWithProvider } = useAuth();
+
+    const onSubmit = ({ email, password }) => logIn(email, password);
 
     return (
         <div className="default-style flex h-screen w-screen justify-center">
@@ -41,6 +44,7 @@ const Login: FC = () => {
                     color="white"
                     authProvider="Google"
                     className="mb-5"
+                    onClick={() => logInWithProvider("google")}
                 >
                     Continue with Google
                 </Button>
@@ -50,6 +54,7 @@ const Login: FC = () => {
                     color="white"
                     authProvider="Github"
                     className="mb-5"
+                    onClick={() => logInWithProvider("github")}
                 >
                     Continue with Github
                 </Button>
@@ -68,7 +73,7 @@ const Login: FC = () => {
                         {...register("email", {
                             required: true,
                         })}
-                        type="email"
+                        type="text"
                         variant="floating"
                         placeholder="Email or username"
                     />
