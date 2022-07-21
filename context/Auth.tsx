@@ -1,12 +1,13 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@utils/supabaseClient";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [currentUser, setCurrentUser] = useState(null);
+    const [session, setSession] = useState(null);
 
     const signUp = async (
         username: string,
@@ -24,8 +25,17 @@ export const AuthProvider = ({ children }) => {
                 }
             )
             .then((data) => {
-                console.log(data);
-                setCurrentUser(data);
+                if (data.error) {
+                    toast(data.error.message, {
+                        position: "bottom-center",
+                        style: {
+                            padding: "5px",
+                            color: "white",
+                            borderRadius: "5px",
+                            backgroundColor: "#329eeb",
+                        },
+                    });
+                }
             });
     };
 
@@ -46,8 +56,17 @@ export const AuthProvider = ({ children }) => {
                         }
                     )
                     .then((data) => {
-                        console.log(data);
-                        setCurrentUser(data);
+                        if (data.error) {
+                            toast(data.error.message, {
+                                position: "bottom-center",
+                                style: {
+                                    padding: "5px",
+                                    color: "white",
+                                    borderRadius: "5px",
+                                    backgroundColor: "#329eeb",
+                                },
+                            });
+                        }
                     });
             });
     };
@@ -56,14 +75,30 @@ export const AuthProvider = ({ children }) => {
         supabase.auth
             .signIn({ provider }, { redirectTo: "/home" })
             .then((data) => {
-                console.log(data);
-                setCurrentUser(data);
+                if (data.error) {
+                    toast(data.error.message, {
+                        position: "bottom-center",
+                        style: {
+                            padding: "5px",
+                            color: "white",
+                            borderRadius: "5px",
+                            backgroundColor: "#329eeb",
+                        },
+                    });
+                }
             });
     };
 
+    useEffect(() => {
+        supabase.auth.onAuthStateChange((_, session) => {
+            console.log(session);
+            setSession(session);
+        });
+    }, []);
+
     return (
         <AuthContext.Provider
-            value={{ currentUser, signUp, logIn, logInWithProvider }}
+            value={{ session, signUp, logIn, logInWithProvider }}
         >
             {children}
         </AuthContext.Provider>

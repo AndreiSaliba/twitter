@@ -2,6 +2,7 @@ import Head from "next/head";
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
+import { Toaster } from "react-hot-toast";
 import "@styles/globals.css";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -20,6 +21,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             </Head>
             <ThemeProvider>
                 <AuthProvider>
+                    <Toaster />
                     <Component {...pageProps} />
                 </AuthProvider>
             </ThemeProvider>
