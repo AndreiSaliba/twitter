@@ -10,10 +10,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <>
             <Head>
                 <title>Twitter</title>
-                <link
-                    rel="icon"
-                    href="https://abs.twimg.com/favicons/twitter.2.ico"
-                />
+                <link rel="icon" href="/favicon.ico" />
                 <meta
                     name="viewport"
                     content="initial-scale=1.0, width=device-width"

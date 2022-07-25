@@ -1,11 +1,17 @@
+import { FC, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
-import { FC } from "react";
 import { useAuth } from "@context/Auth";
 import Button from "@components/Button";
 
 const Landing: FC = () => {
-    const { logInWithProvider } = useAuth();
-    
+    const { session, logInWithProvider } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        session && router.push("/home");
+    }, [session, router]);
+
     return (
         <div className="default-style flex h-screen w-screen justify-center">
             <div className="mt-20 flex min-w-[350px] flex-col items-center">

@@ -1,5 +1,6 @@
+import { FC, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
-import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@context/Auth";
 import Input from "@components/Input";
@@ -13,6 +14,13 @@ interface FormValues {
 }
 
 const Signup: FC = () => {
+    const { session, signUp, logInWithProvider } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        session && router.push("/home");
+    }, [session, router]);
+
     const {
         register,
         handleSubmit,
@@ -21,8 +29,6 @@ const Signup: FC = () => {
         mode: "onBlur",
         reValidateMode: "onChange",
     });
-
-    const { signUp, logInWithProvider } = useAuth();
 
     const onSubmit = ({ username, email, password }) =>
         signUp(username, email, password);

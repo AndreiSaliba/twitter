@@ -7,7 +7,7 @@ const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [session, setSession] = useState(null);
+    const [session, setSession] = useState(supabase.auth.session());
 
     const signUp = async (
         username: string,
@@ -26,7 +26,12 @@ export const AuthProvider = ({ children }) => {
             )
             .then((data) => {
                 if (data.error) {
-                    toast(data.error.message, {
+                    const message =
+                        data.error.message ==
+                        'duplicate key value violates unique constraint "profile_username_key"'
+                            ? "Username has already been taken."
+                            : data.error.message;
+                    toast(message, {
                         position: "bottom-center",
                         style: {
                             padding: "5px",
@@ -89,16 +94,17 @@ export const AuthProvider = ({ children }) => {
             });
     };
 
+    const signOut = () => supabase.auth.signOut();
+
     useEffect(() => {
         supabase.auth.onAuthStateChange((_, session) => {
-            console.log(session);
             setSession(session);
         });
     }, []);
 
     return (
         <AuthContext.Provider
-            value={{ session, signUp, logIn, logInWithProvider }}
+            value={{ session, signUp, logIn, logInWithProvider, signOut }}
         >
             {children}
         </AuthContext.Provider>
