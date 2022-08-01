@@ -18,10 +18,23 @@ module.exports = {
             },
             screens: {
                 xs: { max: "440px" },
+                xl: { max: "1264px" },
             },
             scale: {
                 80: ".80",
                 85: ".85",
+            },
+            fontFamily: {
+                TwitterChirp: [
+                    '"TwitterChirp"',
+                    "-apple-system",
+                    "BlinkMacSystemFont",
+                    '"Segoe UI"',
+                    "Roboto",
+                    "Helvetica",
+                    "Arial",
+                    "sans-serif",
+                ],
             },
         },
     },

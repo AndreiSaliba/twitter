@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: "TwitterChirp";
+    src: url("https://abs.twimg.com/fonts/v2/chirp-regular-web.woff")
+        format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "TwitterChirp";
+    src: url("https://abs.twimg.com/fonts/v2/chirp-bold-web.woff")
+        format("woff");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "TwitterChirp";
+    src: url("https://abs.twimg.com/fonts/v2/chirp-heavy-web.woff")
+        format("woff");
+    font-weight: 900;
+    font-style: normal;
+}
+
 .bg-accent {
     @apply text-white blue:bg-blue yellow:bg-yellow pink:bg-pink purple:bg-purple orange:bg-orange green:bg-green;
 }
@@ -11,7 +35,7 @@
 }
 
 .default-style {
-    @apply h-auto min-h-screen w-screen p-4 light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
+    @apply min-h-screen w-screen max-w-full font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
 }
 
 #floating:not(:placeholder-shown) ~ label {

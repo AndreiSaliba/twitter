@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { Session } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import toast from "react-hot-toast";
 
@@ -7,7 +8,7 @@ const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [session, setSession] = useState(supabase.auth.session());
+    const [session, setSession] = useState<Session>(supabase.auth.session());
 
     const signUp = async (
         username: string,
@@ -21,7 +22,6 @@ export const AuthProvider = ({ children }) => {
                     data: {
                         username,
                     },
-                    redirectTo: "/home",
                 }
             )
             .then((data) => {
@@ -31,15 +31,7 @@ export const AuthProvider = ({ children }) => {
                         'duplicate key value violates unique constraint "profile_username_key"'
                             ? "Username has already been taken."
                             : data.error.message;
-                    toast(message, {
-                        position: "bottom-center",
-                        style: {
-                            padding: "5px",
-                            color: "white",
-                            borderRadius: "5px",
-                            backgroundColor: "#329eeb",
-                        },
-                    });
+                    toast(message);
                 }
             });
     };
@@ -51,60 +43,43 @@ export const AuthProvider = ({ children }) => {
             .eq("username", email)
             .then((data) => {
                 supabase.auth
-                    .signIn(
-                        {
-                            email: data.data[0] ? data?.data[0]?.email : email,
-                            password,
-                        },
-                        {
-                            redirectTo: "/home",
-                        }
-                    )
+                    .signIn({
+                        email: data.data[0] ? data?.data[0]?.email : email,
+                        password,
+                    })
                     .then((data) => {
                         if (data.error) {
-                            toast(data.error.message, {
-                                position: "bottom-center",
-                                style: {
-                                    padding: "5px",
-                                    color: "white",
-                                    borderRadius: "5px",
-                                    backgroundColor: "#329eeb",
-                                },
-                            });
+                            toast(data.error.message);
                         }
                     });
             });
     };
 
     const logInWithProvider = async (provider: "google" | "github") => {
-        supabase.auth
-            .signIn({ provider }, { redirectTo: "/home" })
-            .then((data) => {
-                if (data.error) {
-                    toast(data.error.message, {
-                        position: "bottom-center",
-                        style: {
-                            padding: "5px",
-                            color: "white",
-                            borderRadius: "5px",
-                            backgroundColor: "#329eeb",
-                        },
-                    });
-                }
-            });
+        supabase.auth.signIn({ provider }).then((data) => {
+            if (data.error) {
+                toast(data.error.message);
+            }
+        });
     };
 
     const signOut = () => supabase.auth.signOut();
 
-    useEffect(() => {
-        supabase.auth.onAuthStateChange((_, session) => {
-            setSession(session);
-        });
-    }, []);
+    supabase.auth.onAuthStateChange((event, userSession) => {
+        if (userSession != session) {
+            setSession(userSession);
+        }
+    });
 
     return (
         <AuthContext.Provider
-            value={{ session, signUp, logIn, logInWithProvider, signOut }}
+            value={{
+                session,
+                signUp,
+                logIn,
+                logInWithProvider,
+                signOut,
+            }}
         >
             {children}
         </AuthContext.Provider>

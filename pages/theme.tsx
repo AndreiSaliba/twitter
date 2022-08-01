@@ -75,6 +75,11 @@ const Theme: FC = () => {
                         Landing Page
                     </button>
                 </Link>
+                <Link href="/home" passHref>
+                    <button className="m-1.5 ml-0 rounded-md bg-gray-400 px-3 py-1">
+                        Home Page
+                    </button>
+                </Link>
             </div>
         </div>
     );

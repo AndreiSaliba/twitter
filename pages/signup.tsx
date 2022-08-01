@@ -6,7 +6,6 @@ import { useAuth } from "@context/Auth";
 import Input from "@components/Input";
 import Button from "@components/Button";
 
-
 interface FormValues {
     username: string;
     email: string;
@@ -95,6 +94,7 @@ const Signup: FC = () => {
                         type="text"
                         variant="floating"
                         placeholder="Username"
+                        autoComplete="off"
                         error={
                             errors?.username &&
                             errors?.username.type !== "required"
@@ -117,6 +117,7 @@ const Signup: FC = () => {
                         type="email"
                         variant="floating"
                         placeholder="Email"
+                        autoComplete="email"
                         className="mt-3"
                         error={
                             errors?.email && errors?.email.type !== "required"

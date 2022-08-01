@@ -1,8 +1,9 @@
 import Head from "next/head";
+import { Toaster, resolveValue } from "react-hot-toast";
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
-import { Toaster } from "react-hot-toast";
+import { supabase } from "@utils/supabaseClient";
 import "@styles/globals.css";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -18,7 +19,19 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             </Head>
             <ThemeProvider>
                 <AuthProvider>
-                    <Toaster />
+                    <Toaster position="bottom-center">
+                        {(t) => (
+                            <div
+                                className={`rounded-[5px] py-2.5 px-3 leading-none text-white ${
+                                    supabase.auth.session()
+                                        ? "bg-accent"
+                                        : "bg-blue"
+                                }`}
+                            >
+                                {resolveValue(t.message, t)}
+                            </div>
+                        )}
+                    </Toaster>
                     <Component {...pageProps} />
                 </AuthProvider>
             </ThemeProvider>
