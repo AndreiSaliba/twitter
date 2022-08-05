@@ -5,7 +5,7 @@ import { useTheme } from "@context/Theme";
 const Theme: FC = () => {
     const { changeTheme } = useTheme();
     return (
-        <div className="default-style">
+        <div className="default-style p-4">
             <div>
                 Hello <span className="text-accent">#twitter</span>
             </div>

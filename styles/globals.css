@@ -26,6 +26,10 @@
     font-style: normal;
 }
 
+.bg-theme {
+    @apply text-white light:bg-white light:text-black dim:bg-dim dark:bg-black;
+}
+
 .bg-accent {
     @apply text-white blue:bg-blue yellow:bg-yellow pink:bg-pink purple:bg-purple orange:bg-orange green:bg-green;
 }
@@ -34,8 +38,16 @@
     @apply text-white blue:text-blue yellow:text-yellow pink:text-pink purple:text-purple orange:text-orange green:text-green;
 }
 
+.fill-accent {
+    @apply fill-white blue:fill-blue yellow:fill-yellow pink:fill-pink purple:fill-purple orange:fill-orange green:fill-green;
+}
+
 .default-style {
-    @apply min-h-screen w-screen max-w-full font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
+    @apply min-h-screen font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
+}
+
+.shadow-popup {
+    @apply shadow-[0_0_15px_0_rgba(255,255,255,0.2),0_0_3px_1px_rgba(255,255,255,0.15)] light:shadow-[0_0_15px_0_rgba(101,119,134,0.2),0_0_3px_1px_rgba(101,119,134,0.15)];
 }
 
 #floating:not(:placeholder-shown) ~ label {

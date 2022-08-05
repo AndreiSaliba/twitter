@@ -66,9 +66,7 @@ export const AuthProvider = ({ children }) => {
     const signOut = () => supabase.auth.signOut();
 
     supabase.auth.onAuthStateChange((event, userSession) => {
-        if (userSession != session) {
-            setSession(userSession);
-        }
+        setSession(userSession);
     });
 
     return (
