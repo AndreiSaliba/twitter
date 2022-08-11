@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { useAuth } from "@context/Auth";
-import { UserProfile } from "@utils/types";
 import { getButtonData, MenuButton } from "@utils/MenuButtonsTypes";
 
 const MenuButton: FC<{
@@ -42,13 +41,13 @@ const MenuButton: FC<{
                     viewBox="0 0 24 24"
                     className="w-[24.5px] max-w-full fill-[#e7e9ea] light:fill-[#0f1419]"
                 >
-                    {router.pathname == buttonData?.url
+                    {router.asPath == buttonData?.url
                         ? buttonData?.solidIcon
                         : buttonData?.icon}
                 </svg>
                 <span
                     className={`ml-[19px] mr-[15px] text-[19px] leading-[23px] xl:hidden ${
-                        router.pathname == buttonData?.url && "font-semibold"
+                        router.asPath == buttonData?.url && "font-semibold"
                     }`}
                 >
                     {buttonData?.text}
@@ -79,14 +78,12 @@ const MenuButton: FC<{
 };
 
 export const Sidebar: FC = () => {
-    const { session, signOut } = useAuth();
-    const [userProfile, setUserProfile] = useState<UserProfile>(
-        session?.user?.user_metadata?.userProfile
-    );
+    const { userProfile, signOut } = useAuth();
 
+    const [isSSR, setIsSSR] = useState(true);
     useEffect(() => {
-        setUserProfile(session?.user?.user_metadata?.userProfile);
-    }, [session]);
+        setIsSSR(false);
+    }, []);
 
     const [moreReferenceElement, setMoreReferenceElement] = useState(null);
     const [morePopperElement, setMorePopperElement] = useState(null);
@@ -194,11 +191,11 @@ export const Sidebar: FC = () => {
                                 </div>
                             </Menu.Item>
                             <Menu.Item>
-                                <Link
-                                    href="https://support.twitter.com/"
-                                    target={"_blank"}
-                                >
-                                    <a>
+                                <Link href="https://support.twitter.com/">
+                                    <a
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         <div className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#16181c]">
                                             <svg
                                                 viewBox="0 0 24 24"
@@ -278,7 +275,7 @@ export const Sidebar: FC = () => {
                             </span>
                             <svg
                                 viewBox="0 0 24 24"
-                                className="hidden w-[23px] fill-[#e7e9ea] light:fill-[#0f1419] xl:block"
+                                className="hidden w-[23px] fill-[#e7e9ea] light:fill-white xl:block"
                             >
                                 <g>
                                     <path d="M8.8 7.2H5.6V3.9c0-.4-.3-.8-.8-.8s-.7.4-.7.8v3.3H.8c-.4 0-.8.3-.8.8s.3.8.8.8h3.3v3.3c0 .4.3.8.8.8s.8-.3.8-.8V8.7H9c.4 0 .8-.3.8-.8s-.5-.7-1-.7zm15-4.9v-.1h-.1c-.1 0-9.2 1.2-14.4 11.7-3.8 7.6-3.6 9.9-3.3 9.9.3.1 3.4-6.5 6.7-9.2 5.2-1.1 6.6-3.6 6.6-3.6s-1.5.2-2.1.2c-.8 0-1.4-.2-1.7-.3 1.3-1.2 2.4-1.5 3.5-1.7.9-.2 1.8-.4 3-1.2 2.2-1.6 1.9-5.5 1.8-5.7z"></path>
@@ -289,128 +286,121 @@ export const Sidebar: FC = () => {
                 </Link>
             </div>
 
-            <Menu>
-                <Menu.Button ref={setUserReferenceElement}>
-                    <div
-                        className={`my-[11px] box-content rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818] xl:max-h-[38px] xl:max-w-[38px] ${
-                            !userProfile && "hidden"
-                        }`}
-                        suppressHydrationWarning
+            {!isSSR && userProfile && (
+                <Menu>
+                    <Menu.Button ref={setUserReferenceElement} as="div">
+                        <div className="my-[11px] box-content rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818] xl:max-h-[38px] xl:max-w-[38px]">
+                            <div className="flex w-auto flex-row justify-between xl:items-center">
+                                <div className="flex max-h-[38px] flex-row xl:max-w-[38px]">
+                                    <Image
+                                        src={
+                                            userProfile?.profile_image_url
+                                                ? userProfile?.profile_image_url
+                                                : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                        }
+                                        alt="Profile picture"
+                                        width={38}
+                                        height={38}
+                                        layout="fixed"
+                                        className="rounded-full"
+                                    />
+
+                                    <div className="mx-[11px] mt-0.5 flex flex-col items-start xl:hidden">
+                                        <span className="text-sm font-bold leading-4">
+                                            {userProfile?.name
+                                                ? userProfile?.name
+                                                : ""}
+                                        </span>
+                                        <span className="text-sm font-medium leading-[22px] text-[#71767C]">
+                                            {userProfile?.name
+                                                ? "@" + userProfile?.name
+                                                : ""}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    className="w-[17.5px] fill-[#e7e9ea] light:fill-[#0f1419] xl:hidden"
+                                >
+                                    <g>
+                                        <circle cx="5" cy="12" r="2"></circle>
+                                        <circle cx="12" cy="12" r="2"></circle>
+                                        <circle cx="19" cy="12" r="2"></circle>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </Menu.Button>
+                    <Menu.Items
+                        ref={setUserPopperElement}
+                        style={userStyles.popper}
+                        {...userAttributes.popper}
+                        className="bg-theme shadow-popup w-[300px] rounded-2xl py-[11px]"
                     >
-                        <div className="flex w-auto flex-row justify-between xl:items-center">
-                            <div className="flex max-h-[38px] flex-row xl:max-w-[38px]">
-                                <Image
-                                    src={
-                                        userProfile?.profile_image_url
-                                            ? userProfile?.profile_image_url
-                                            : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                                    }
-                                    alt="Profile picture"
-                                    width={38}
-                                    height={38}
-                                    layout="fixed"
-                                    className="rounded-full"
-                                />
-
-                                <div className="mx-[11px] mt-0.5 flex flex-col items-start xl:hidden">
-                                    <span
-                                        className="text-sm font-bold leading-4"
-                                        suppressHydrationWarning
-                                    >
-                                        {userProfile?.name
-                                            ? userProfile?.name
-                                            : ""}
-                                    </span>
-                                    <span
-                                        className="text-sm font-medium leading-[22px] text-[#71767C]"
-                                        suppressHydrationWarning
-                                    >
-                                        {userProfile?.name
-                                            ? "@" + userProfile?.name
-                                            : ""}
-                                    </span>
+                        <Menu.Item>
+                            <div className="flex flex-row justify-between px-[15px] py-[11px]">
+                                <div className="flex flex-row items-center">
+                                    <Image
+                                        src={
+                                            userProfile?.profile_image_url
+                                                ? userProfile?.profile_image_url
+                                                : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                        }
+                                        alt="Profile picture"
+                                        width={46}
+                                        height={46}
+                                        layout="fixed"
+                                        className="rounded-full"
+                                    />
+                                    <div className="mx-[11px] mt-[3px] flex flex-col justify-start">
+                                        <span className="text-sm font-bold leading-4">
+                                            {userProfile?.name}
+                                        </span>
+                                        <span className="text-sm font-medium leading-[22px] text-[#71767C]">
+                                            @{userProfile?.username}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <svg
-                                viewBox="0 0 24 24"
-                                className="w-[17.5px] fill-[#e7e9ea] light:fill-[#0f1419] xl:hidden"
-                            >
-                                <g>
-                                    <circle cx="5" cy="12" r="2"></circle>
-                                    <circle cx="12" cy="12" r="2"></circle>
-                                    <circle cx="19" cy="12" r="2"></circle>
-                                </g>
-                            </svg>
-                        </div>
-                    </div>
-                </Menu.Button>
-                <Menu.Items
-                    ref={setUserPopperElement}
-                    style={userStyles.popper}
-                    {...userAttributes.popper}
-                    className="bg-theme shadow-popup w-[300px] rounded-2xl py-[11px]"
-                >
-                    <Menu.Item>
-                        <div className="flex flex-row justify-between px-[15px] py-[11px]">
-                            <div className="flex flex-row items-center">
-                                <Image
-                                    src={
-                                        userProfile?.profile_image_url
-                                            ? userProfile?.profile_image_url
-                                            : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                                    }
-                                    alt="Profile picture"
-                                    width={46}
-                                    height={46}
-                                    layout="fixed"
-                                    className="rounded-full"
-                                />
-                                <div className="mx-[11px] mt-[3px] flex flex-col justify-start">
-                                    <span className="text-sm font-bold leading-4">
-                                        {userProfile?.name}
-                                    </span>
-                                    <span className="text-sm font-medium leading-[22px] text-[#71767C]">
-                                        @{userProfile?.username}
-                                    </span>
-                                </div>
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    className="fill-accent w-[17.5px]"
+                                >
+                                    <g>
+                                        <path d="M9 20c-.264 0-.52-.104-.707-.293l-4.785-4.785c-.39-.39-.39-1.023 0-1.414s1.023-.39 1.414 0l3.946 3.945L18.075 4.41c.32-.45.94-.558 1.395-.24.45.318.56.942.24 1.394L9.817 19.577c-.17.24-.438.395-.732.42-.028.002-.057.003-.085.003z"></path>
+                                    </g>
+                                </svg>
                             </div>
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                className="fill-accent w-[17.5px]"
+                        </Menu.Item>
+                        <div className="h-px w-full light:bg-[#eff3f4] dim:bg-[#38444d] dark:bg-[#2f3336]" />
+                        <Menu.Item>
+                            <div
+                                className="cursor-pointer p-[15px] text-sm leading-[19px] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#16181c]"
+                                onClick={() =>
+                                    toast(
+                                        "Sorry this hasn't been implemented yet."
+                                    )
+                                }
                             >
-                                <g>
-                                    <path d="M9 20c-.264 0-.52-.104-.707-.293l-4.785-4.785c-.39-.39-.39-1.023 0-1.414s1.023-.39 1.414 0l3.946 3.945L18.075 4.41c.32-.45.94-.558 1.395-.24.45.318.56.942.24 1.394L9.817 19.577c-.17.24-.438.395-.732.42-.028.002-.057.003-.085.003z"></path>
-                                </g>
-                            </svg>
-                        </div>
-                    </Menu.Item>
-                    <div className="h-px w-full light:bg-[#eff3f4] dim:bg-[#38444d] dark:bg-[#2f3336]" />
-                    <Menu.Item>
-                        <div
-                            className="cursor-pointer p-[15px] text-sm leading-[19px] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#16181c]"
-                            onClick={() =>
-                                toast("Sorry this hasn't been implemented yet.")
-                            }
-                        >
-                            <span className="text-[#e7e9ea] light:text-black">
-                                Add an existing account
-                            </span>
-                        </div>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <div
-                            className="cursor-pointer p-[15px] text-sm leading-[19px] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#16181c]"
-                            onClick={signOut}
-                        >
-                            <span className="text-[#e7e9ea] light:text-black">
-                                Log out @{userProfile?.username}
-                            </span>
-                        </div>
-                    </Menu.Item>
-                </Menu.Items>
-            </Menu>
+                                <span className="text-[#e7e9ea] light:text-black">
+                                    Add an existing account
+                                </span>
+                            </div>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <div
+                                className="cursor-pointer p-[15px] text-sm leading-[19px] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#16181c]"
+                                onClick={signOut}
+                            >
+                                <span className="text-[#e7e9ea] light:text-black">
+                                    Log out @{userProfile?.username}
+                                </span>
+                            </div>
+                        </Menu.Item>
+                    </Menu.Items>
+                </Menu>
+            )}
         </div>
     );
 };

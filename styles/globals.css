@@ -26,8 +26,16 @@
     font-style: normal;
 }
 
+.default-style {
+    @apply min-h-screen font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
+}
+
 .bg-theme {
     @apply text-white light:bg-white light:text-black dim:bg-dim dark:bg-black;
+}
+
+.bg-theme-blur {
+    @apply text-white backdrop-blur-md light:bg-white/[0.65] light:text-black dim:bg-dim/[0.65] dark:bg-black/[0.65];
 }
 
 .bg-accent {
@@ -40,10 +48,6 @@
 
 .fill-accent {
     @apply fill-white blue:fill-blue yellow:fill-yellow pink:fill-pink purple:fill-purple orange:fill-orange green:fill-green;
-}
-
-.default-style {
-    @apply min-h-screen font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
 }
 
 .shadow-popup {

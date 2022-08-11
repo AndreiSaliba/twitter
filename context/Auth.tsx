@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import toast from "react-hot-toast";
+import { UserProfile } from "@utils/types";
 
 const AuthContext = createContext(null);
 
@@ -9,6 +10,9 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [session, setSession] = useState<Session>(supabase.auth.session());
+    const [userProfile, setUserProfile] = useState<UserProfile>(
+        supabase.auth.session()?.user?.user_metadata?.userProfile
+    );
 
     const signUp = async (
         username: string,
@@ -40,7 +44,7 @@ export const AuthProvider = ({ children }) => {
         supabase
             .from("profile")
             .select("email")
-            .eq("username", email)
+            .ilike("username", email)
             .then((data) => {
                 supabase.auth
                     .signIn({
@@ -56,23 +60,27 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logInWithProvider = async (provider: "google" | "github") => {
-        supabase.auth.signIn({ provider }).then((data) => {
-            if (data.error) {
-                toast(data.error.message);
-            }
-        });
+        supabase.auth
+            .signIn({ provider }, { redirectTo: "localhost:3000/home" })
+            .then((data) => {
+                if (data.error) {
+                    toast(data.error.message);
+                }
+            });
     };
 
     const signOut = () => supabase.auth.signOut();
 
     supabase.auth.onAuthStateChange((event, userSession) => {
         setSession(userSession);
+        setUserProfile(userSession?.user?.user_metadata?.userProfile);
     });
 
     return (
         <AuthContext.Provider
             value={{
                 session,
+                userProfile,
                 signUp,
                 logIn,
                 logInWithProvider,

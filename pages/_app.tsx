@@ -5,6 +5,7 @@ import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
 import { supabase } from "@utils/supabaseClient";
 import "@styles/globals.css";
+import { DatabaseProvider } from "@context/Database";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
     return (
@@ -19,20 +20,22 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             </Head>
             <ThemeProvider>
                 <AuthProvider>
-                    <Toaster position="bottom-center">
-                        {(t) => (
-                            <div
-                                className={`rounded-[5px] py-2.5 px-3 leading-none text-white ${
-                                    supabase.auth.session()
-                                        ? "bg-accent"
-                                        : "bg-blue"
-                                }`}
-                            >
-                                {resolveValue(t.message, t)}
-                            </div>
-                        )}
-                    </Toaster>
-                    <Component {...pageProps} />
+                    <DatabaseProvider>
+                        <Toaster position="bottom-center">
+                            {(t) => (
+                                <div
+                                    className={`rounded-[5px] py-2.5 px-3 leading-none text-white ${
+                                        supabase.auth.session()
+                                            ? "bg-accent"
+                                            : "bg-blue"
+                                    }`}
+                                >
+                                    {resolveValue(t.message, t)}
+                                </div>
+                            )}
+                        </Toaster>
+                        <Component {...pageProps} />
+                    </DatabaseProvider>
                 </AuthProvider>
             </ThemeProvider>
         </>
