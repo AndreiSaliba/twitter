@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
     const logInWithProvider = async (provider: "google" | "github") => {
         supabase.auth
-            .signIn({ provider }, { redirectTo: "localhost:3000/home" })
+            .signIn({ provider })
             .then((data) => {
                 if (data.error) {
                     toast(data.error.message);

@@ -31,7 +31,7 @@ const MenuButton: FC<{
     const Button = () => {
         return (
             <div
-                className="flex h-fit w-fit flex-row items-center justify-center rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]"
+                className="flex max-h-min w-fit flex-row items-center justify-center overflow-scroll rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]"
                 onClick={() =>
                     buttonData?.disabled &&
                     toast("Sorry this hasn't been implemented yet.")
@@ -134,7 +134,7 @@ export const Sidebar: FC = () => {
     );
 
     return (
-        <div className="sticky top-0 flex h-screen w-[275px] flex-col justify-between px-[11px] xl:max-w-[88px] xl:items-center">
+        <div className="sticky top-0 flex h-min min-h-screen w-[275px] flex-col justify-between px-[11px] xl:max-w-[88px] xl:items-center">
             <div className="xl:max-w-[47px]">
                 <Link href="/home">
                     <a>
@@ -160,14 +160,19 @@ export const Sidebar: FC = () => {
                     <MenuButton type="lists" />
                     <MenuButton type="profile" />
                     <Menu>
-                        <Menu.Button ref={setMoreReferenceElement}>
+                        <Menu.Button
+                            ref={setMoreReferenceElement}
+                            as="button"
+                            aria-label="More Options Menu"
+                        >
                             <MenuButton type="more" as="div" />
                         </Menu.Button>
                         <Menu.Items
                             ref={setMorePopperElement}
                             style={moreStyles.popper}
                             {...moreAttributes.popper}
-                            className="bg-theme shadow-popup w-[210px] overflow-hidden rounded-[4px]"
+                            as="div"
+                            className="bg-theme shadow-popup z-50 w-[210px] overflow-hidden rounded-[4px]"
                         >
                             <Menu.Item>
                                 <div
@@ -288,8 +293,8 @@ export const Sidebar: FC = () => {
 
             {!isSSR && userProfile && (
                 <Menu>
-                    <Menu.Button ref={setUserReferenceElement} as="div">
-                        <div className="my-[11px] box-content rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818] xl:max-h-[38px] xl:max-w-[38px]">
+                    <Menu.Button ref={setUserReferenceElement}>
+                        <div className="my-[11px] box-content cursor-pointer rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818] xl:max-h-[38px] xl:max-w-[38px]">
                             <div className="flex w-auto flex-row justify-between xl:items-center">
                                 <div className="flex max-h-[38px] flex-row xl:max-w-[38px]">
                                     <Image
@@ -312,8 +317,8 @@ export const Sidebar: FC = () => {
                                                 : ""}
                                         </span>
                                         <span className="text-sm font-medium leading-[22px] text-[#71767C]">
-                                            {userProfile?.name
-                                                ? "@" + userProfile?.name
+                                            {userProfile?.username
+                                                ? "@" + userProfile?.username
                                                 : ""}
                                         </span>
                                     </div>

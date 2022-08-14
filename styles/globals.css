@@ -27,7 +27,7 @@
 }
 
 .default-style {
-    @apply min-h-screen font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
+    @apply min-h-screen min-w-full font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
 }
 
 .bg-theme {
@@ -36,6 +36,10 @@
 
 .bg-theme-blur {
     @apply text-white backdrop-blur-md light:bg-white/[0.65] light:text-black dim:bg-dim/[0.65] dark:bg-black/[0.65];
+}
+
+.border-theme {
+    @apply light:border-white dim:border-dim dark:border-black;
 }
 
 .bg-accent {
@@ -48,6 +52,10 @@
 
 .fill-accent {
     @apply fill-white blue:fill-blue yellow:fill-yellow pink:fill-pink purple:fill-purple orange:fill-orange green:fill-green;
+}
+
+.border-accent {
+    @apply border-white blue:border-blue yellow:border-yellow pink:border-pink purple:border-purple orange:border-orange green:border-green;
 }
 
 .shadow-popup {

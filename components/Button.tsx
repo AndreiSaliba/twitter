@@ -1,6 +1,10 @@
 import React, { FC, ButtonHTMLAttributes } from "react";
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface SharedProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    className?: string;
+}
+
+interface RoundedButtonProps extends SharedProps {
     variant: "rounded";
     color:
         | "blue"
@@ -9,19 +13,23 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
         | "white"
         | "white-black";
     authProvider?: "Google" | "Github";
-    className?: string;
 }
 
-const Button: FC<Props> = ({
-    variant,
-    color,
-    authProvider,
-    className,
-    children,
-    ...rest
-}) => {
-    switch (variant) {
+interface FollowButtonProps extends SharedProps {
+    variant: "follow" | "following";
+}
+
+const Button: FC<RoundedButtonProps | FollowButtonProps> = (props) => {
+    switch (props.variant) {
         case "rounded":
+            const {
+                variant,
+                color,
+                authProvider,
+                className,
+                children,
+                ...rest
+            } = props;
             let buttonColor;
             switch (color) {
                 case "white":
@@ -96,6 +104,28 @@ const Button: FC<Props> = ({
                         {authProvider && authProviderLogo}
                         <span>{children}</span>
                     </span>
+                </button>
+            );
+
+        case "follow":
+            return (
+                <button
+                    className="flex h-[34px] cursor-pointer items-center rounded-full border border-transparent bg-[#eff3f4] px-[15px] hover:bg-[#d7dbdc] light:bg-[#0f1419]"
+                    {...rest}
+                >
+                    <span className="select-none text-[14px] font-bold leading-[19px] text-black light:text-white">
+                        Follow
+                    </span>
+                </button>
+            );
+
+        case "following":
+            return (
+                <button
+                    className="group flex h-[34px] cursor-pointer items-center rounded-full border border-[#536571] px-[15px] hover:border-[#67070f] hover:bg-[#190305] hover:text-[#f4212e] light:border-[#CFD9DE] light:hover:border-[#fdc9ce] light:hover:bg-[#fee8ea] dim:hover:border-[#67070f] dim:hover:bg-[#2c202c]"
+                    {...rest}
+                >
+                    <span className="w-[62.5px] select-none text-center text-[14px] font-bold leading-[19px] before:content-['Following'] group-hover:before:content-['Unfollow']" />
                 </button>
             );
     }

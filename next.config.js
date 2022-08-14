@@ -8,4 +8,5 @@ module.exports = {
             "pbs.twimg.com",
         ],
     },
+    experimental: { images: { allowFutureImage: true } },
 };
