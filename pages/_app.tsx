@@ -1,13 +1,24 @@
+import { ReactElement, ReactNode } from "react";
+import type { AppProps } from "next/app";
+import { NextPage } from "next";
 import Head from "next/head";
 import { Toaster, resolveValue } from "react-hot-toast";
-import type { AppProps } from "next/app";
+import { supabase } from "@utils/supabaseClient";
 import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
-import { supabase } from "@utils/supabaseClient";
-import "@styles/globals.css";
 import { DatabaseProvider } from "@context/Database";
+import "@styles/globals.css";
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+export type NextPageWithLayout = NextPage & {
+    getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+    Component: NextPageWithLayout;
+};
+
+export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+    const getLayout = Component.getLayout ?? ((page) => page);
     return (
         <>
             <Head>
@@ -34,7 +45,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                                 </div>
                             )}
                         </Toaster>
-                        <Component {...pageProps} />
+                        {getLayout(<Component {...pageProps} />)}
                     </DatabaseProvider>
                 </AuthProvider>
             </ThemeProvider>

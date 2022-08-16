@@ -18,6 +18,8 @@
         "paths": {
             "@components/*": ["components/*"],
             "@context/*": ["context/*"],
+            "@layouts/*": ["layouts/*"],
+            "@pages/*": ["pages/*"],
             "@public/*": ["public/*"],
             "@styles/*": ["styles/*"],
             "@utils/*": ["utils/*"]

@@ -31,7 +31,7 @@ const MenuButton: FC<{
     const Button = () => {
         return (
             <div
-                className="flex max-h-min w-fit flex-row items-center justify-center overflow-scroll rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]"
+                className="flex max-h-min w-fit flex-row items-center justify-center rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]"
                 onClick={() =>
                     buttonData?.disabled &&
                     toast("Sorry this hasn't been implemented yet.")
