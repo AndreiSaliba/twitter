@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/future/image";
 import { Tab } from "@headlessui/react";
@@ -7,13 +7,12 @@ import "linkify-plugin-mention";
 import "linkify-plugin-hashtag";
 import { useAuth } from "@context/Auth";
 import { useDatabase } from "@context/Database";
-import { NextPageWithLayout } from "@pages/_app";
 import { UserProfile } from "@utils/types";
 import Header from "@components/Header";
 import Button from "@components/Button";
 import HomeLayout from "@layouts/HomeLayout";
 
-const User: NextPageWithLayout = () => {
+const User = () => {
     const [userProfile, setUserProfile] = useState<UserProfile>();
     const [sessionUserProfile, setSessionUserProfile] = useState<UserProfile>();
 
@@ -366,6 +365,6 @@ const User: NextPageWithLayout = () => {
     );
 };
 
-User.getLayout = (page: ReactElement) => <HomeLayout>{page}</HomeLayout>;
+User.PageLayout = HomeLayout;
 
 export default User;

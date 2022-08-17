@@ -1,6 +1,5 @@
-import { ReactElement, ReactNode } from "react";
+import { ElementType } from "react";
 import type { AppProps } from "next/app";
-import { NextPage } from "next";
 import Head from "next/head";
 import { Toaster, resolveValue } from "react-hot-toast";
 import { supabase } from "@utils/supabaseClient";
@@ -9,16 +8,16 @@ import { AuthProvider } from "@context/Auth";
 import { DatabaseProvider } from "@context/Database";
 import "@styles/globals.css";
 
-export type NextPageWithLayout = NextPage & {
-    getLayout?: (page: ReactElement) => ReactNode;
+type ComponentWithPageLayout = AppProps & {
+    Component: AppProps["Component"] & {
+        PageLayout?: ElementType;
+    };
 };
 
-type AppPropsWithLayout = AppProps & {
-    Component: NextPageWithLayout;
-};
-
-export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-    const getLayout = Component.getLayout ?? ((page) => page);
+export default function MyApp({
+    Component,
+    pageProps,
+}: ComponentWithPageLayout) {
     return (
         <>
             <Head>
@@ -45,7 +44,13 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                                 </div>
                             )}
                         </Toaster>
-                        {getLayout(<Component {...pageProps} />)}
+                        {Component.PageLayout ? (
+                            <Component.PageLayout>
+                                <Component {...pageProps} />
+                            </Component.PageLayout>
+                        ) : (
+                            <Component {...pageProps} />
+                        )}
                     </DatabaseProvider>
                 </AuthProvider>
             </ThemeProvider>
