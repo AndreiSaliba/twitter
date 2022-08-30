@@ -2,12 +2,14 @@ import React, { FC, ButtonHTMLAttributes } from "react";
 
 interface SharedProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     className?: string;
+    textClassName?: string;
 }
 
 interface RoundedButtonProps extends SharedProps {
     variant: "rounded";
     color:
         | "blue"
+        | "accent"
         | "transparent"
         | "transparent-blue"
         | "white"
@@ -27,6 +29,7 @@ const Button: FC<RoundedButtonProps | FollowButtonProps> = (props) => {
                 color,
                 authProvider,
                 className,
+                textClassName,
                 children,
                 ...rest
             } = props;
@@ -38,6 +41,10 @@ const Button: FC<RoundedButtonProps | FollowButtonProps> = (props) => {
                     break;
                 case "blue":
                     buttonColor = "bg-blue p-1.5 hover:bg-[#1a8cd8] text-white";
+                    break;
+                case "accent":
+                    buttonColor =
+                        "bg-accent p-1.5 hover:brightness-95 text-white";
                     break;
                 case "transparent":
                     buttonColor =
@@ -97,10 +104,12 @@ const Button: FC<RoundedButtonProps | FollowButtonProps> = (props) => {
 
             return (
                 <button
-                    className={`w-80 rounded-full p-1.5 ${buttonColor} ${className}`}
+                    className={`${className} w-80 rounded-full p-1.5 ${buttonColor}`}
                     {...rest}
                 >
-                    <span className="flex flex-row items-center justify-center font-semibold">
+                    <span
+                        className={`${textClassName} flex flex-row items-center justify-center font-semibold`}
+                    >
                         {authProvider && authProviderLogo}
                         <span>{children}</span>
                     </span>

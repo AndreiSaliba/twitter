@@ -1,8 +1,8 @@
 import { useState, useEffect, createContext, useContext } from "react";
 
 type ThemeType = "theme" | "accent";
-type Theme = "light-theme" | "dim-theme" | "dark-theme";
-type Accent =
+export type Theme = "light-theme" | "dim-theme" | "dark-theme";
+export type Accent =
     | "blue-accent"
     | "yellow-accent"
     | "pink-accent"

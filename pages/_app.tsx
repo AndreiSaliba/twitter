@@ -7,6 +7,7 @@ import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
 import { DatabaseProvider } from "@context/Database";
 import "@styles/globals.css";
+import DisplayModal from "@components/modals/DisplayModal";
 
 type ComponentWithPageLayout = AppProps & {
     Component: AppProps["Component"] & {
@@ -51,6 +52,7 @@ export default function MyApp({
                         ) : (
                             <Component {...pageProps} />
                         )}
+                        <DisplayModal />
                     </DatabaseProvider>
                 </AuthProvider>
             </ThemeProvider>

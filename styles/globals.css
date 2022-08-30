@@ -58,6 +58,14 @@
     @apply border-white blue:border-blue yellow:border-yellow pink:border-pink purple:border-purple orange:border-orange green:border-green;
 }
 
+.ring-accent {
+    @apply ring-white blue:ring-blue yellow:ring-yellow pink:ring-pink purple:ring-purple orange:ring-orange green:ring-green;
+}
+
+.hover-shadow-accent {
+    @apply blue:hover:bg-blue/[0.1] yellow:hover:bg-yellow/[0.1] pink:hover:bg-pink/[0.1] purple:hover:bg-purple/[0.1] orange:hover:bg-orange/[0.1] green:hover:bg-green/[0.1];
+}
+
 .shadow-popup {
     @apply shadow-[0_0_15px_0_rgba(255,255,255,0.2),0_0_3px_1px_rgba(255,255,255,0.15)] light:shadow-[0_0_15px_0_rgba(101,119,134,0.2),0_0_3px_1px_rgba(101,119,134,0.15)];
 }

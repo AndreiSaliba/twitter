@@ -17,7 +17,7 @@ const Header: FC<HeaderProps | ProfileHeaderProps> = (props) => {
     switch (props.variant) {
         case "home":
             return (
-                <div className="bg-theme-blur sticky top-0 z-50 flex h-[50px] w-full items-center p-[15px]">
+                <div className="bg-theme-blur sticky top-0 z-10 flex h-[50px] w-full items-center p-[15px]">
                     <span className="py-0.5 text-[19px] font-bold leading-[23px] text-[#E9EAE7] light:text-[#0f1419]">
                         Latest Tweets
                     </span>
@@ -25,7 +25,7 @@ const Header: FC<HeaderProps | ProfileHeaderProps> = (props) => {
             );
         case "notifications":
             return (
-                <div className="bg-theme-blur sticky top-0 z-50 flex h-[50px] w-full items-center p-[15px]">
+                <div className="bg-theme-blur sticky top-0 z-10 flex h-[50px] w-full items-center p-[15px]">
                     <span className="py-0.5 text-[19px] font-bold leading-[23px] text-[#E9EAE7] light:text-[#0f1419]">
                         Notifications
                     </span>
@@ -34,7 +34,7 @@ const Header: FC<HeaderProps | ProfileHeaderProps> = (props) => {
         case "profile":
             const { name, tweetCount } = props;
             return (
-                <div className="bg-theme-blur sticky top-0 z-50 flex h-[50px] w-full items-center p-[15px]">
+                <div className="bg-theme-blur sticky top-0 z-10 flex h-[50px] w-full items-center p-[15px]">
                     <div className="-ml-[6.5px] w-[59.5px]">
                         <div
                             className="w-min cursor-pointer rounded-full p-[7px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]"

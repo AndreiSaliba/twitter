@@ -1,6 +1,6 @@
-import { FC, useEffect, useState } from "react";
+import { FC, forwardRef, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
+import Link, { LinkProps } from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { Menu } from "@headlessui/react";
@@ -31,7 +31,7 @@ const MenuButton: FC<{
     const Button = () => {
         return (
             <div
-                className="flex max-h-min w-fit flex-row items-center justify-center rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]"
+                className="flex max-h-min w-fit cursor-pointer flex-row items-center justify-center rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]"
                 onClick={() =>
                     buttonData?.disabled &&
                     toast("Sorry this hasn't been implemented yet.")
@@ -56,29 +56,22 @@ const MenuButton: FC<{
         );
     };
 
-    if (buttonType === "div") {
-        return (
-            <div className="w-full py-[4px]">
-                <Button />
-            </div>
-        );
-    }
-
-    return (
-        <Link
-            href={
-                buttonData?.url && !buttonData?.disabled ? buttonData?.url : ""
-            }
-        >
+    return buttonData?.url && !buttonData?.disabled && buttonType !== "div" ? (
+        <Link href={buttonData?.url}>
             <a className="w-full py-[4px]">
                 <Button />
             </a>
         </Link>
+    ) : (
+        <div className="w-full py-[4px]">
+            <Button />
+        </div>
     );
 };
 
 export const Sidebar: FC = () => {
     const { userProfile, signOut } = useAuth();
+    const router = useRouter();
 
     const [isSSR, setIsSSR] = useState(true);
     useEffect(() => {
@@ -132,6 +125,28 @@ export const Sidebar: FC = () => {
             ],
         }
     );
+
+    const DisplayNextLink = forwardRef<LinkProps, { children: ReactNode }>(
+        (props, ref) => {
+            const { children, ...rest } = props;
+            return (
+                <Link
+                    href={
+                        router.pathname === "/[user]"
+                            ? `/[user]?user=${router.asPath.slice(
+                                  1
+                              )}&display=true"`
+                            : `${router.asPath}?display=true`
+                    }
+                    as="/i/display"
+                    shallow={true}
+                >
+                    <a {...rest}>{children}</a>
+                </Link>
+            );
+        }
+    );
+    DisplayNextLink.displayName = "DisplayNextLink";
 
     return (
         <div className="sticky top-0 flex h-min min-h-screen w-[275px] flex-col justify-between px-[11px] xl:max-w-[88px] xl:items-center">
@@ -195,7 +210,7 @@ export const Sidebar: FC = () => {
                                     <span>Settings and privacy</span>
                                 </div>
                             </Menu.Item>
-                            <Menu.Item>
+                            <Menu.Item as={"div"}>
                                 <Link href="https://support.twitter.com/">
                                     <a
                                         target="_blank"
@@ -216,26 +231,22 @@ export const Sidebar: FC = () => {
                                     </a>
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item>
-                                <Link href="/i/display">
-                                    <a>
-                                        <div className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#16181c]">
-                                            <svg
-                                                viewBox="0 0 24 24"
-                                                className="mr-[11px] w-[17.5px] max-w-full fill-[#e7e9ea] light:fill-[#0f1419]"
-                                            >
-                                                <g className="fill-accent">
-                                                    <path d="M8.18 16.99c-.19.154-.476.032-.504-.21-.137-1.214-.234-4.053 1.483-5.943.908-1 3.02-1.52 4.475-.198s1.14 3.473.23 4.473c-2.07 2.15-3.428.058-5.686 1.878z"></path>
-                                                </g>
-                                                <g>
-                                                    <path d="M15.692 11.205l6.383-7.216c.45-.45.45-1.18 0-1.628-.45-.45-1.178-.45-1.627 0l-7.232 6.402s.782.106 1.595.93c.548.558.882 1.51.882 1.51z"></path>
-                                                    <path d="M17.45 22.28H3.673c-1.148 0-2.083-.946-2.083-2.11V7.926c0-1.165.934-2.112 2.082-2.112h5.836c.414 0 .75.336.75.75s-.336.75-.75.75H3.672c-.32 0-.583.274-.583.612V20.17c0 .336.26.61.582.61h13.78c.32 0 .583-.273.583-.61v-6.28c0-.415.336-.75.75-.75s.75.335.75.75v6.28c0 1.163-.934 2.11-2.084 2.11z"></path>
-                                                </g>
-                                            </svg>
-                                            <span>Display</span>
-                                        </div>
-                                    </a>
-                                </Link>
+                            <Menu.Item as={DisplayNextLink}>
+                                <div className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#16181c]">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        className="mr-[11px] w-[17.5px] max-w-full fill-[#e7e9ea] light:fill-[#0f1419]"
+                                    >
+                                        <g className="fill-accent">
+                                            <path d="M8.18 16.99c-.19.154-.476.032-.504-.21-.137-1.214-.234-4.053 1.483-5.943.908-1 3.02-1.52 4.475-.198s1.14 3.473.23 4.473c-2.07 2.15-3.428.058-5.686 1.878z"></path>
+                                        </g>
+                                        <g>
+                                            <path d="M15.692 11.205l6.383-7.216c.45-.45.45-1.18 0-1.628-.45-.45-1.178-.45-1.627 0l-7.232 6.402s.782.106 1.595.93c.548.558.882 1.51.882 1.51z"></path>
+                                            <path d="M17.45 22.28H3.673c-1.148 0-2.083-.946-2.083-2.11V7.926c0-1.165.934-2.112 2.082-2.112h5.836c.414 0 .75.336.75.75s-.336.75-.75.75H3.672c-.32 0-.583.274-.583.612V20.17c0 .336.26.61.582.61h13.78c.32 0 .583-.273.583-.61v-6.28c0-.415.336-.75.75-.75s.75.335.75.75v6.28c0 1.163-.934 2.11-2.084 2.11z"></path>
+                                        </g>
+                                    </svg>
+                                    <span>Display</span>
+                                </div>
                             </Menu.Item>
                             <Menu.Item>
                                 <div

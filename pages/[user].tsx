@@ -15,6 +15,7 @@ import HomeLayout from "@layouts/HomeLayout";
 const User = () => {
     const [userProfile, setUserProfile] = useState<UserProfile>();
     const [sessionUserProfile, setSessionUserProfile] = useState<UserProfile>();
+    const [following, setFollowing] = useState<boolean>(false);
 
     const { getUser } = useDatabase();
     const { session } = useAuth();
@@ -122,10 +123,21 @@ const User = () => {
                                             </g>
                                         </svg>
                                     </div>
-                                    {true ? (
-                                        <Button variant="follow" />
+                                    {following ? (
+                                        <div
+                                            onClick={() => setFollowing(false)}
+                                        >
+                                            <Button
+                                                variant="following"
+                                                onClick={() =>
+                                                    setFollowing(false)
+                                                }
+                                            />
+                                        </div>
                                     ) : (
-                                        <Button variant="following" />
+                                        <div onClick={() => setFollowing(true)}>
+                                            <Button variant="follow" />
+                                        </div>
                                     )}
                                 </>
                             )}

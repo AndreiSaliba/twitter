@@ -9,4 +9,12 @@ module.exports = {
         ],
     },
     experimental: { images: { allowFutureImage: true } },
+    async rewrites() {
+        return [
+            {
+                source: "/i/display",
+                destination: "/home/?display=true",
+            },
+        ];
+    },
 };
