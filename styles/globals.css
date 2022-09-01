@@ -26,8 +26,8 @@
     font-style: normal;
 }
 
-.default-style {
-    @apply min-h-screen min-w-full font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
+body {
+    @apply h-fit min-h-screen min-w-full font-TwitterChirp light:bg-white light:text-black dim:bg-dim dim:text-white dark:bg-black dark:text-white;
 }
 
 .bg-theme {

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import Image from "next/future/image";
 import { Tab } from "@headlessui/react";
-import Linkify from "linkify-react";
-import "linkify-plugin-mention";
-import "linkify-plugin-hashtag";
+import { Linkify, LinkifyCore } from "react-easy-linkify";
 import { useAuth } from "@context/Auth";
 import { useDatabase } from "@context/Database";
 import { UserProfile } from "@utils/types";
@@ -48,6 +47,9 @@ const User = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
+
+    LinkifyCore.PluginManager.enableMention();
+    LinkifyCore.PluginManager.enableHashtag();
 
     return (
         <>
@@ -156,15 +158,30 @@ const User = () => {
                             {userProfile?.description && (
                                 <div className="mb-[11px] flex w-full flex-col whitespace-pre-wrap text-[14px] leading-[19px] text-[#E9EAE7] light:text-[#141923]">
                                     <Linkify
-                                        tagName="span"
                                         options={{
+                                            className:
+                                                "text-accent hover:underline w-fit",
+                                            ignoreTags: [
+                                                "script",
+                                                "style",
+                                                "img",
+                                                "svg",
+                                            ],
                                             target: {
                                                 url: "_blank",
                                             },
-                                            rel: "nofollow noreferrer noopener",
-                                            className:
-                                                "text-accent hover:underline w-fit",
-                                            ignoreTags: ["script", "style"],
+                                            linkWrapper: (props) => {
+                                                return (
+                                                    <Link href={props.href}>
+                                                        <a
+                                                            {...props}
+                                                            rel="nofollow noreferrer noopener"
+                                                        >
+                                                            {props.children}
+                                                        </a>
+                                                    </Link>
+                                                );
+                                            },
                                             format: {
                                                 url: (value) =>
                                                     value
