@@ -70,7 +70,7 @@ const MenuButton: FC<{
 };
 
 export const Sidebar: FC = () => {
-    const { userProfile, signOut } = useAuth();
+    const { currentUser, signOut } = useAuth();
     const router = useRouter();
 
     const [isSSR, setIsSSR] = useState(true);
@@ -302,7 +302,7 @@ export const Sidebar: FC = () => {
                 </Link>
             </div>
 
-            {!isSSR && userProfile && (
+            {!isSSR && currentUser && (
                 <Menu>
                     <Menu.Button ref={setUserReferenceElement}>
                         <div className="my-[11px] box-content cursor-pointer rounded-full p-[11px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818] xl:max-h-[38px] xl:max-w-[38px]">
@@ -310,8 +310,8 @@ export const Sidebar: FC = () => {
                                 <div className="flex max-h-[38px] flex-row xl:max-w-[38px]">
                                     <Image
                                         src={
-                                            userProfile?.profile_image_url
-                                                ? userProfile?.profile_image_url
+                                            currentUser?.profile_image_url
+                                                ? currentUser?.profile_image_url
                                                 : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                                         }
                                         alt="Profile picture"
@@ -323,13 +323,13 @@ export const Sidebar: FC = () => {
 
                                     <div className="mx-[11px] mt-0.5 flex flex-col items-start xl:hidden">
                                         <span className="text-sm font-bold leading-4">
-                                            {userProfile?.name
-                                                ? userProfile?.name
+                                            {currentUser?.name
+                                                ? currentUser?.name
                                                 : ""}
                                         </span>
                                         <span className="text-sm font-medium leading-[22px] text-[#71767C]">
-                                            {userProfile?.username
-                                                ? "@" + userProfile?.username
+                                            {currentUser?.username
+                                                ? "@" + currentUser?.username
                                                 : ""}
                                         </span>
                                     </div>
@@ -359,8 +359,8 @@ export const Sidebar: FC = () => {
                                 <div className="flex flex-row items-center">
                                     <Image
                                         src={
-                                            userProfile?.profile_image_url
-                                                ? userProfile?.profile_image_url
+                                            currentUser?.profile_image_url
+                                                ? currentUser?.profile_image_url
                                                 : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                                         }
                                         alt="Profile picture"
@@ -371,10 +371,10 @@ export const Sidebar: FC = () => {
                                     />
                                     <div className="mx-[11px] mt-[3px] flex flex-col justify-start">
                                         <span className="text-sm font-bold leading-4">
-                                            {userProfile?.name}
+                                            {currentUser?.name}
                                         </span>
                                         <span className="text-sm font-medium leading-[22px] text-[#71767C]">
-                                            @{userProfile?.username}
+                                            @{currentUser?.username}
                                         </span>
                                     </div>
                                 </div>
@@ -410,7 +410,7 @@ export const Sidebar: FC = () => {
                                 onClick={signOut}
                             >
                                 <span className="text-[#e7e9ea] light:text-black">
-                                    Log out @{userProfile?.username}
+                                    Log out @{currentUser?.username}
                                 </span>
                             </div>
                         </Menu.Item>

@@ -5,7 +5,6 @@ import { Toaster, resolveValue } from "react-hot-toast";
 import { supabase } from "@utils/supabaseClient";
 import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
-import { DatabaseProvider } from "@context/Database";
 import "@styles/globals.css";
 import DisplayModal from "@components/modals/DisplayModal";
 
@@ -31,29 +30,27 @@ export default function MyApp({
             </Head>
             <ThemeProvider>
                 <AuthProvider>
-                    <DatabaseProvider>
-                        <Toaster position="bottom-center">
-                            {(t) => (
-                                <div
-                                    className={`rounded-[5px] py-2.5 px-3 leading-none text-white ${
-                                        supabase.auth.session()
-                                            ? "bg-accent"
-                                            : "bg-blue"
-                                    }`}
-                                >
-                                    {resolveValue(t.message, t)}
-                                </div>
-                            )}
-                        </Toaster>
-                        {Component.PageLayout ? (
-                            <Component.PageLayout>
-                                <Component {...pageProps} />
-                            </Component.PageLayout>
-                        ) : (
-                            <Component {...pageProps} />
+                    <Toaster position="bottom-center">
+                        {(t) => (
+                            <div
+                                className={`rounded-[5px] py-2.5 px-3 leading-none text-white ${
+                                    supabase.auth.session()
+                                        ? "bg-accent"
+                                        : "bg-blue"
+                                }`}
+                            >
+                                {resolveValue(t.message, t)}
+                            </div>
                         )}
-                        <DisplayModal />
-                    </DatabaseProvider>
+                    </Toaster>
+                    {Component.PageLayout ? (
+                        <Component.PageLayout>
+                            <Component {...pageProps} />
+                        </Component.PageLayout>
+                    ) : (
+                        <Component {...pageProps} />
+                    )}
+                    <DisplayModal />
                 </AuthProvider>
             </ThemeProvider>
         </>

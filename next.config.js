@@ -7,13 +7,22 @@ module.exports = {
             "abs.twimg.com",
             "pbs.twimg.com",
         ],
+        // remotePatterns: [
+        //     {
+        //         protocol: "https",
+        //     },
+        // ],
     },
-    experimental: { images: { allowFutureImage: true } },
+    // experimental: { images: { allowFutureImage: true } },
     async rewrites() {
         return [
             {
                 source: "/i/display",
                 destination: "/home/?display=true",
+            },
+            {
+                source: "/settings/profile",
+                destination: "/home/?editProfile=true",
             },
         ];
     },

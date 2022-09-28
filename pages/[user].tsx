@@ -5,7 +5,7 @@ import Image from "next/future/image";
 import { Tab } from "@headlessui/react";
 import { Linkify, LinkifyCore } from "react-easy-linkify";
 import { useAuth } from "@context/Auth";
-import { useDatabase } from "@context/Database";
+import { getUser, followUser, unfollowUser } from "@utils/Database";
 import { UserProfile } from "@utils/types";
 import Header from "@components/Header";
 import Button from "@components/Button";
@@ -16,8 +16,7 @@ const User = () => {
     const [sessionUserProfile, setSessionUserProfile] = useState<UserProfile>();
     const [following, setFollowing] = useState<boolean>(false);
 
-    const { getUser } = useDatabase();
-    const { session } = useAuth();
+    const { session, currentUser, getCurrentUser } = useAuth();
 
     const router = useRouter();
     const { user } = router.query;
@@ -29,20 +28,22 @@ const User = () => {
     useEffect(() => {
         if (user && session) {
             if (
-                session?.user?.user_metadata?.userProfile.username.toLowerCase() ===
+                currentUser?.username.toLowerCase() ===
                 (user as string).toLowerCase()
             ) {
-                setUserProfile(session?.user?.user_metadata?.userProfile);
-                setSessionUserProfile(
-                    session?.user?.user_metadata?.userProfile
-                );
+                // getCurrentUser();
+                setUserProfile(currentUser);
+                setSessionUserProfile(currentUser);
             } else {
-                getUser(user).then((data) => {
-                    data ? setUserProfile(data) : router.push("/home");
+                setSessionUserProfile(currentUser);
+                getUser(user as string, currentUser.username).then((data) => {
+                    if (data) {
+                        setUserProfile(data.profile);
+                        setFollowing(data.isFollowedByRequest);
+                    } else {
+                        router.push("/home");
+                    }
                 });
-                setSessionUserProfile(
-                    session?.user?.user_metadata?.userProfile
-                );
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -94,6 +95,20 @@ const User = () => {
                         <div className="flex h-[68px] w-full justify-end">
                             {userProfile.userid ===
                             sessionUserProfile.userid ? (
+                                // <Link
+                                //     href={
+                                //         router.pathname === "/[user]"
+                                //             ? `/[user]?user=${router.asPath.slice(
+                                //                   1
+                                //               )}&editProfile=true"`
+                                //             : `${router.asPath}?editProfile=true`
+                                //     }
+                                //     as="/settings/profile"
+                                //     shallow={true}
+                                // >
+                                //     <a>
+                                //     </a>
+                                // </Link>
                                 <div className="flex h-[34px] cursor-pointer items-center rounded-full border border-[#536571] px-[15px] light:border-[#CFD9DE] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2b3640] dark:hover:bg-[#181919]">
                                     <span className="select-none text-[14px] font-bold leading-[19px] text-[#EFF3F4] light:text-[#0F1419]">
                                         Edit profile
@@ -127,17 +142,38 @@ const User = () => {
                                     </div>
                                     {following ? (
                                         <div
-                                            onClick={() => setFollowing(false)}
+                                            onClick={() => {
+                                                unfollowUser(
+                                                    userProfile.userid,
+                                                    sessionUserProfile.userid
+                                                );
+                                                setUserProfile((prevState) => ({
+                                                    ...prevState,
+                                                    followers_count:
+                                                        userProfile.followers_count -
+                                                        1,
+                                                }));
+                                                setFollowing(false);
+                                            }}
                                         >
-                                            <Button
-                                                variant="following"
-                                                onClick={() =>
-                                                    setFollowing(false)
-                                                }
-                                            />
+                                            <Button variant="following" />
                                         </div>
                                     ) : (
-                                        <div onClick={() => setFollowing(true)}>
+                                        <div
+                                            onClick={() => {
+                                                followUser(
+                                                    userProfile.userid,
+                                                    sessionUserProfile.userid
+                                                );
+                                                setUserProfile((prevState) => ({
+                                                    ...prevState,
+                                                    followers_count:
+                                                        userProfile.followers_count +
+                                                        1,
+                                                }));
+                                                setFollowing(true);
+                                            }}
+                                        >
                                             <Button variant="follow" />
                                         </div>
                                     )}
@@ -334,27 +370,27 @@ const User = () => {
                     </div>
 
                     <Tab.Group>
-                        <Tab.List className="flex h-[50px] w-full flex-row justify-between">
+                        <Tab.List className="flex h-[50px] w-full flex-row justify-between overflow-y-scroll scrollbar-hide">
                             {[
                                 {
                                     text: "Tweets",
-                                    width: "w-[140px]",
+                                    width: "max-w-[140px]",
                                 },
                                 {
                                     text: "Tweets & replies",
-                                    width: "w-[198px]",
+                                    width: "max-w-[198px]",
                                 },
                                 {
                                     text: "Media",
-                                    width: "w-[134px]",
+                                    width: "max-w-[134px]",
                                 },
                                 {
                                     text: "Likes",
-                                    width: "w-[127px]",
+                                    width: "max-w-[127px]",
                                 },
                             ].map((value, index) => (
                                 <Tab
-                                    className={`flex ${value.width} items-center light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]`}
+                                    className={`flex ${value.width} w-full items-center light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]`}
                                     key={index}
                                 >
                                     {({ selected }) => (

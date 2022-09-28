@@ -19,3 +19,8 @@ export interface UserProfile {
     default_profile_image: boolean;
     default_profile_banner: boolean;
 }
+
+export interface UserPageProfile {
+    profile: UserProfile;
+    isFollowedByRequest: boolean;
+}

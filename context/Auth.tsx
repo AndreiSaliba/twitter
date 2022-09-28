@@ -10,7 +10,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [session, setSession] = useState<Session>(supabase.auth.session());
-    const [userProfile, setUserProfile] = useState<UserProfile>(
+    const [currentUser, setCurrentUser] = useState<UserProfile>(
         supabase.auth.session()?.user?.user_metadata?.userProfile
     );
 
@@ -60,31 +60,38 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logInWithProvider = async (provider: "google" | "github") => {
-        supabase.auth
-            .signIn({ provider })
-            .then((data) => {
-                if (data.error) {
-                    toast(data.error.message);
-                }
-            });
+        supabase.auth.signIn({ provider }).then((data) => {
+            if (data.error) {
+                toast(data.error.message);
+            }
+        });
     };
 
     const signOut = () => supabase.auth.signOut();
 
+    const getCurrentUser = async () => {
+        const { user, error } = await supabase.auth.api.getUser(
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        );
+        error && console.log(error);
+        return user;
+    };
+
     supabase.auth.onAuthStateChange((event, userSession) => {
         setSession(userSession);
-        setUserProfile(userSession?.user?.user_metadata?.userProfile);
+        setCurrentUser(userSession?.user?.user_metadata?.userProfile);
     });
 
     return (
         <AuthContext.Provider
             value={{
                 session,
-                userProfile,
+                currentUser,
                 signUp,
                 logIn,
                 logInWithProvider,
                 signOut,
+                getCurrentUser,
             }}
         >
             {children}
