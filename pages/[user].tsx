@@ -95,25 +95,25 @@ const User = () => {
                         <div className="flex h-[68px] w-full justify-end">
                             {userProfile.userid ===
                             sessionUserProfile.userid ? (
-                                // <Link
-                                //     href={
-                                //         router.pathname === "/[user]"
-                                //             ? `/[user]?user=${router.asPath.slice(
-                                //                   1
-                                //               )}&editProfile=true"`
-                                //             : `${router.asPath}?editProfile=true`
-                                //     }
-                                //     as="/settings/profile"
-                                //     shallow={true}
-                                // >
-                                //     <a>
-                                //     </a>
-                                // </Link>
-                                <div className="flex h-[34px] cursor-pointer items-center rounded-full border border-[#536571] px-[15px] light:border-[#CFD9DE] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2b3640] dark:hover:bg-[#181919]">
-                                    <span className="select-none text-[14px] font-bold leading-[19px] text-[#EFF3F4] light:text-[#0F1419]">
-                                        Edit profile
-                                    </span>
-                                </div>
+                                <Link
+                                    href={
+                                        router.pathname === "/[user]"
+                                            ? `/[user]?user=${router.asPath.slice(
+                                                  1
+                                              )}&editProfile=true"`
+                                            : `${router.asPath}?editProfile=true`
+                                    }
+                                    as="/settings/profile"
+                                    shallow={true}
+                                >
+                                    <a>
+                                        <div className="flex h-[34px] cursor-pointer items-center rounded-full border border-[#536571] px-[15px] light:border-[#CFD9DE] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2b3640] dark:hover:bg-[#181919]">
+                                            <span className="select-none text-[14px] font-bold leading-[19px] text-[#EFF3F4] light:text-[#0F1419]">
+                                                Edit profile
+                                            </span>
+                                        </div>
+                                    </a>
+                                </Link>
                             ) : (
                                 <>
                                     <div className="mr-2 flex h-[34px] w-[34px] cursor-pointer items-center justify-center rounded-full border border-[#536571] hover:bg-[#181919] light:border-[#CFD9DE] light:hover:bg-[#e5e6e6]">
