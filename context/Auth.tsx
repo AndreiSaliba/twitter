@@ -68,15 +68,16 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
-    const signOut = () => supabase.auth.signOut();
+    const signOut = () => {
+        supabase.auth.signOut();
+        setCurrentUser(null);
+    };
 
     const refreshCurrentUser = async () => {
         session &&
             getUser(
-                supabase.auth.session()?.user?.user_metadata?.userProfile
-                    .username,
-                supabase.auth.session()?.user?.user_metadata?.userProfile
-                    .username
+                session?.user?.user_metadata?.userProfile.username,
+                session?.user?.user_metadata?.userProfile.username
             ).then((data) => {
                 if (data && data.currentUser) {
                     setCurrentUser(data.profile);
@@ -86,6 +87,8 @@ export const AuthProvider = ({ children }) => {
 
     supabase.auth.onAuthStateChange((event, userSession) => {
         setSession(userSession);
+        !currentUser &&
+            setCurrentUser(userSession?.user?.user_metadata?.userProfile);
     });
 
     return (

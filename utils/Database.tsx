@@ -12,7 +12,7 @@ export const getUser = async (
         })
         .select();
 
-    console.warn("Get user");
+    console.info("Request: Get user");
     error && console.log(error);
     return data as unknown as UserPageProfile;
 };
@@ -38,7 +38,7 @@ export const updateUserProfile = async (
         _banner_image_url: bannerImageURL,
     });
 
-    console.warn("Update Profile");
+    console.info("Request: Update Profile");
     error && console.log(error);
 };
 
@@ -48,7 +48,7 @@ export const followUser = async (followedUser: string, follower: string) => {
         _follower: follower,
     });
 
-    console.warn("Follow");
+    console.info("Request: Follow");
     error && console.log(error);
 };
 
@@ -58,6 +58,6 @@ export const unfollowUser = async (followedUser: string, follower: string) => {
         _follower: follower,
     });
 
-    console.warn("Unfollow");
+    console.info("Request: Unfollow");
     error && console.log(error);
 };

@@ -85,7 +85,7 @@ const User = () => {
                                 className="-z-0 aspect-[3/1] object-cover"
                             />
                         ) : (
-                            <div className="z-0 aspect-[3/1] max-h-[200px] w-auto max-w-full bg-[#333639] light:bg-[#cfd9de]" />
+                            <div className="z-0 aspect-[3/1] max-h-[200px] w-auto max-w-full bg-[#333639] light:bg-[#cfd9de] dim:bg-[#425364]" />
                         )}
 
                         <div className="absolute left-[15px] -bottom-[68px] flex h-[142px] w-1/4 items-center">

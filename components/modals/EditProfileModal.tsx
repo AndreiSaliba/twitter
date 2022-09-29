@@ -1,12 +1,10 @@
+import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
 import Button from "@components/Button";
 import Input from "@components/Input";
 import { useAuth } from "@context/Auth";
 import { Dialog } from "@headlessui/react";
 import { updateUserProfile } from "@utils/Database";
-import Image from "next/future/image";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
 
 export interface EditProfileFormValues {
     name: string;
@@ -25,6 +23,7 @@ function EditProfileModal() {
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm<EditProfileFormValues>();
 
@@ -58,13 +57,41 @@ function EditProfileModal() {
                 profile_banner_url: bannerImageUrl,
             }));
         });
-        router.push(
-            router.pathname === "/[user]"
-                ? `/${router?.query?.user}`
-                : router.pathname,
-            undefined,
-            { shallow: true }
-        );
+        router
+            .push(
+                router.pathname === "/[user]"
+                    ? `/${router?.query?.user}`
+                    : router.pathname,
+                undefined,
+                { shallow: true }
+            )
+            .then(() =>
+                resetForm({
+                    name,
+                    username,
+                    bio,
+                    location,
+                    website,
+                    profileImageUrl,
+                    bannerImageUrl,
+                })
+            );
+    };
+
+    const resetForm = (
+        defaultValues = {
+            name: currentUser?.name,
+            username: currentUser?.username,
+            bio: currentUser?.description,
+            location: currentUser?.location,
+            website: currentUser?.url,
+            profileImageUrl: currentUser?.profile_image_url,
+            bannerImageUrl: currentUser?.profile_banner_url,
+        }
+    ) => {
+        reset({
+            ...defaultValues,
+        });
     };
 
     return (
@@ -73,13 +100,15 @@ function EditProfileModal() {
             className="relative z-10"
             open={!!router.query.editProfile}
             onClose={() => {
-                router.push(
-                    router.pathname === "/[user]"
-                        ? `/${router?.query?.user}`
-                        : router.pathname,
-                    undefined,
-                    { shallow: true }
-                );
+                router
+                    .push(
+                        router.pathname === "/[user]"
+                            ? `/${router?.query?.user}`
+                            : router.pathname,
+                        undefined,
+                        { shallow: true }
+                    )
+                    .then(() => resetForm());
             }}
         >
             <div className="fixed inset-0 z-[55] bg-[#5B7085] bg-opacity-40" />
@@ -96,16 +125,20 @@ function EditProfileModal() {
                                         <div className="w-[53px]">
                                             <div
                                                 className="-ml-[7.5px] w-min rounded-full p-[7.5px] light:hover:bg-[#e6e7e7] dim:hover:bg-[#2c3640] dark:hover:bg-[#181818]"
-                                                onClick={() =>
-                                                    router.push(
-                                                        router.pathname ===
-                                                            "/[user]"
-                                                            ? `/${router?.query?.user}`
-                                                            : router.pathname,
-                                                        undefined,
-                                                        { shallow: true }
-                                                    )
-                                                }
+                                                onClick={() => {
+                                                    router
+                                                        .push(
+                                                            router.pathname ===
+                                                                "/[user]"
+                                                                ? `/${router?.query?.user}`
+                                                                : router.pathname,
+                                                            undefined,
+                                                            { shallow: true }
+                                                        )
+                                                        .then(() =>
+                                                            resetForm()
+                                                        );
+                                                }}
                                             >
                                                 <svg
                                                     viewBox="0 0 24 24"
@@ -127,7 +160,7 @@ function EditProfileModal() {
                                             type="submit"
                                             variant="rounded"
                                             color="white-black"
-                                            className="h-[30px] w-max bg-[#eff3f4] px-[15px] py-0 light:border-[#0f1419] light:hover:border-[#0f1419]"
+                                            className="h-[30px] w-min bg-[#eff3f4] px-[15px] py-0 light:border-[#0f1419] light:hover:border-[#0f1419]"
                                             textClassName="text-[13px] leading-[19px] font-bold"
                                         >
                                             Save
