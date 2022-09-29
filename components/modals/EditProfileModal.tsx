@@ -19,7 +19,7 @@ export interface EditProfileFormValues {
 }
 
 function EditProfileModal() {
-    const { currentUser } = useAuth();
+    const { currentUser, setCurrentUser } = useAuth();
     const router = useRouter();
 
     const {
@@ -46,7 +46,18 @@ function EditProfileModal() {
             website,
             profileImageUrl,
             bannerImageUrl
-        );
+        ).then(() => {
+            setCurrentUser((prevState) => ({
+                ...prevState,
+                name: name,
+                username: username,
+                description: bio,
+                location: location,
+                url: website,
+                profile_image_url: profileImageUrl,
+                profile_banner_url: bannerImageUrl,
+            }));
+        });
         router.push(
             router.pathname === "/[user]"
                 ? `/${router?.query?.user}`

@@ -1,8 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
-import toast from "react-hot-toast";
+import { getUser } from "@utils/Database";
 import { UserProfile } from "@utils/types";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
 
@@ -69,17 +70,22 @@ export const AuthProvider = ({ children }) => {
 
     const signOut = () => supabase.auth.signOut();
 
-    const getCurrentUser = async () => {
-        const { user, error } = await supabase.auth.api.getUser(
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-        );
-        error && console.log(error);
-        return user;
+    const refreshCurrentUser = async () => {
+        session &&
+            getUser(
+                supabase.auth.session()?.user?.user_metadata?.userProfile
+                    .username,
+                supabase.auth.session()?.user?.user_metadata?.userProfile
+                    .username
+            ).then((data) => {
+                if (data && data.currentUser) {
+                    setCurrentUser(data.profile);
+                }
+            });
     };
 
     supabase.auth.onAuthStateChange((event, userSession) => {
         setSession(userSession);
-        setCurrentUser(userSession?.user?.user_metadata?.userProfile);
     });
 
     return (
@@ -87,11 +93,12 @@ export const AuthProvider = ({ children }) => {
             value={{
                 session,
                 currentUser,
+                setCurrentUser,
                 signUp,
                 logIn,
                 logInWithProvider,
                 signOut,
-                getCurrentUser,
+                refreshCurrentUser,
             }}
         >
             {children}

@@ -16,7 +16,7 @@ const User = () => {
     const [sessionUserProfile, setSessionUserProfile] = useState<UserProfile>();
     const [following, setFollowing] = useState<boolean>(false);
 
-    const { session, currentUser, getCurrentUser } = useAuth();
+    const { session, currentUser, refreshCurrentUser } = useAuth();
 
     const router = useRouter();
     const { user } = router.query;
@@ -31,12 +31,10 @@ const User = () => {
                 currentUser?.username.toLowerCase() ===
                 (user as string).toLowerCase()
             ) {
-                // getCurrentUser();
-                setUserProfile(currentUser);
-                setSessionUserProfile(currentUser);
+                refreshCurrentUser();
             } else {
                 setSessionUserProfile(currentUser);
-                getUser(user as string, currentUser.username).then((data) => {
+                getUser(user as string, currentUser?.username).then((data) => {
                     if (data) {
                         setUserProfile(data.profile);
                         setFollowing(data.isFollowedByRequest);
@@ -48,6 +46,19 @@ const User = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
+
+    useEffect(() => {
+        if (currentUser && user) {
+            if (
+                currentUser?.username.toLowerCase() ===
+                (user as string).toLowerCase()
+            ) {
+                setUserProfile(currentUser);
+            }
+            setSessionUserProfile(currentUser);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentUser]);
 
     LinkifyCore.PluginManager.enableMention();
     LinkifyCore.PluginManager.enableHashtag();
@@ -62,30 +73,36 @@ const User = () => {
                         tweetCount={userProfile?.statuses_count}
                     />
                     <div className="relative">
-                        {userProfile.default_profile_banner ? (
-                            <div className="z-0 aspect-[3/1] max-h-[200px] w-auto max-w-full bg-[#333639] light:bg-[#cfd9de]" />
-                        ) : (
+                        {userProfile?.profile_banner_url &&
+                        userProfile?.profile_banner_url.match(
+                            /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+                        ) ? (
                             <Image
                                 src={userProfile.profile_banner_url}
                                 alt="Banner"
                                 width="600"
                                 height="200"
-                                className="-z-0"
+                                className="-z-0 aspect-[3/1] object-cover"
                             />
+                        ) : (
+                            <div className="z-0 aspect-[3/1] max-h-[200px] w-auto max-w-full bg-[#333639] light:bg-[#cfd9de]" />
                         )}
 
                         <div className="absolute left-[15px] -bottom-[68px] flex h-[142px] w-1/4 items-center">
                             <div className="bg-theme border-theme max-w-[142px] rounded-full border-4 xs:border-2">
                                 <Image
                                     src={
-                                        userProfile?.profile_image_url
+                                        userProfile?.profile_image_url &&
+                                        userProfile?.profile_image_url.match(
+                                            /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+                                        )
                                             ? userProfile?.profile_image_url
                                             : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                                     }
-                                    alt="Profile Image"
-                                    width="134"
-                                    height="134"
-                                    className=" rounded-full"
+                                    alt=""
+                                    width={134}
+                                    height={134}
+                                    className="aspect-square rounded-full object-cover"
                                 />
                             </div>
                         </div>

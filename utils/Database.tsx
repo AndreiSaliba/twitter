@@ -1,6 +1,22 @@
 import { supabase } from "@utils/supabaseClient";
 import { UserPageProfile } from "./types";
 
+export const getUser = async (
+    username: string,
+    userRequestingProfile: string
+) => {
+    const { data, error } = await supabase
+        .rpc("get_user_profile", {
+            _username: username,
+            _user_requesting_profile: userRequestingProfile,
+        })
+        .select();
+
+    console.warn("Get user");
+    error && console.log(error);
+    return data as unknown as UserPageProfile;
+};
+
 export const updateUserProfile = async (
     userID: string,
     name: string,
@@ -22,21 +38,8 @@ export const updateUserProfile = async (
         _banner_image_url: bannerImageURL,
     });
 
+    console.warn("Update Profile");
     error && console.log(error);
-};
-
-export const getUser = async (
-    username: string,
-    userRequestingProfile: string
-) => {
-    const { data, error } = await supabase
-        .rpc("get_user_profile", {
-            _username: username,
-            _user_requesting_profile: userRequestingProfile,
-        })
-        .select();
-    error && console.log(error);
-    return data as unknown as UserPageProfile;
 };
 
 export const followUser = async (followedUser: string, follower: string) => {
@@ -45,6 +48,7 @@ export const followUser = async (followedUser: string, follower: string) => {
         _follower: follower,
     });
 
+    console.warn("Follow");
     error && console.log(error);
 };
 
@@ -54,5 +58,6 @@ export const unfollowUser = async (followedUser: string, follower: string) => {
         _follower: follower,
     });
 
+    console.warn("Unfollow");
     error && console.log(error);
 };

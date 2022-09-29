@@ -22,5 +22,6 @@ export interface UserProfile {
 
 export interface UserPageProfile {
     profile: UserProfile;
-    isFollowedByRequest: boolean;
+    isFollowedByRequest?: boolean;
+    currentUser?: boolean;
 }
