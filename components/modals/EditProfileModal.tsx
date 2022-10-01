@@ -115,12 +115,12 @@ function EditProfileModal() {
             <div className="fixed inset-0 z-[60] overflow-y-auto font-TwitterChirp">
                 <div className="flex min-h-full items-center justify-center p-4 text-center">
                     <Dialog.Panel className="bg-theme flex h-full max-h-[650px] w-full max-w-[600px] transform flex-col overflow-x-hidden overflow-y-scroll rounded-2xl text-left align-middle shadow-xl transition-all">
-                        <div className="mx-[15px] mb-[15px] flex w-full flex-col justify-center">
+                        <div className=" mb-[15px] flex w-full flex-col justify-center">
                             <form
                                 onSubmit={handleSubmit(onSubmit)}
                                 className="flex w-full max-w-[600px] flex-col"
                             >
-                                <div className="flex h-[50px] w-full flex-row items-center justify-between">
+                                <div className="mx-[15px] flex h-[50px] w-full flex-row items-center justify-between">
                                     <div className="flex flex-row items-center">
                                         <div className="w-[53px]">
                                             <div
@@ -160,7 +160,7 @@ function EditProfileModal() {
                                             type="submit"
                                             variant="rounded"
                                             color="white-black"
-                                            className="h-[30px] w-min bg-[#eff3f4] px-[15px] py-0 light:border-[#0f1419] light:hover:border-[#0f1419]"
+                                            className="h-[30px] w-[61.5px] bg-[#eff3f4] px-[15px] py-0 light:border-[#0f1419] light:hover:border-[#0f1419]"
                                             textClassName="text-[13px] leading-[19px] font-bold"
                                         >
                                             Save
@@ -171,7 +171,7 @@ function EditProfileModal() {
                                     {...register("name", { required: true })}
                                     variant="floating"
                                     placeholder="Name"
-                                    className="my-[11px] w-full max-w-[568px]"
+                                    className="my-[11px] mx-[15px] max-w-[568px]"
                                     maxLength={50}
                                     charCounter
                                     defaultValue={currentUser?.name}
@@ -192,7 +192,7 @@ function EditProfileModal() {
                                     })}
                                     variant="floating"
                                     placeholder="Username"
-                                    className="my-[11px] w-full max-w-[568px]"
+                                    className="my-[11px] mx-[15px] max-w-[568px]"
                                     maxLength={15}
                                     charCounter
                                     defaultValue={currentUser?.username}
@@ -212,7 +212,7 @@ function EditProfileModal() {
                                     variant="floating"
                                     as="textarea"
                                     placeholder="Bio"
-                                    className="my-[11px] w-full max-w-[568px]"
+                                    className="my-[11px] mx-[15px] max-w-[568px]"
                                     maxLength={160}
                                     charCounter
                                     defaultValue={currentUser?.description}
@@ -221,7 +221,7 @@ function EditProfileModal() {
                                     {...register("location")}
                                     variant="floating"
                                     placeholder="Location"
-                                    className="my-[11px] w-full max-w-[568px]"
+                                    className="my-[11px] mx-[15px] max-w-[568px]"
                                     maxLength={30}
                                     charCounter
                                     defaultValue={currentUser?.location}
@@ -230,7 +230,7 @@ function EditProfileModal() {
                                     {...register("website")}
                                     variant="floating"
                                     placeholder="Website"
-                                    className="my-[11px] w-full max-w-[568px]"
+                                    className="my-[11px] mx-[15px] max-w-[568px]"
                                     maxLength={100}
                                     charCounter
                                     defaultValue={currentUser?.url}
@@ -239,7 +239,7 @@ function EditProfileModal() {
                                     {...register("profileImageUrl")}
                                     variant="floating"
                                     placeholder="Profile Image Url"
-                                    className="my-[11px] w-full max-w-[568px]"
+                                    className="my-[11px] mx-[15px] max-w-[568px]"
                                     maxLength={100}
                                     charCounter
                                     defaultValue={
@@ -250,7 +250,7 @@ function EditProfileModal() {
                                     {...register("bannerImageUrl")}
                                     variant="floating"
                                     placeholder="Banner Image Url"
-                                    className="my-[11px] w-full max-w-[568px]"
+                                    className="my-[11px] mx-[15px] max-w-[568px]"
                                     maxLength={100}
                                     charCounter
                                     defaultValue={

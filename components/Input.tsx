@@ -41,11 +41,13 @@ const Input = forwardRef<any, Props<HTMLInputElement | HTMLTextAreaElement>>(
             case "floating":
                 return (
                     <div
-                        className={`relative z-0 box-border flex w-80 rounded-[0.2rem] p-2 pt-6 shadow-[0_0_0_1px] focus-within:shadow-[0_0_0_2px] ${
+                        className={`${
+                            className || "w-80"
+                        } relative z-0 box-border flex rounded-[0.2rem] p-2 pt-6 shadow-[0_0_0_1px] focus-within:shadow-[0_0_0_2px] ${
                             error
                                 ? "shadow-[#f4212e] focus-within:shadow-[#f4212e]"
                                 : "shadow-[#333639] focus-within:shadow-blue light:shadow-[#dadce0] light:focus-within:shadow-blue"
-                        } ${className}`}
+                        }`}
                     >
                         {as === "textarea" ? (
                             <textarea
