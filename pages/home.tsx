@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { useAuth } from "@context/Auth";
 import Header from "@components/Header";
 import HomeLayout from "@layouts/HomeLayout";
-import Image from "next/future/image";
+import ComposeTweet from "@components/ComposeTweet";
 
 const Home = () => {
-    const { session, currentUser } = useAuth();
+    const { session } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
@@ -16,7 +16,9 @@ const Home = () => {
     return (
         <>
             <Header variant="home" />
-            <div className="h-[2000px] w-full bg-transparent"></div>
+            <div className="h-[2000px] w-full bg-transparent">
+                <ComposeTweet />
+            </div>
         </>
     );
 };

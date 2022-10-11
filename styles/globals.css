@@ -66,6 +66,10 @@ body {
     @apply blue:hover:bg-blue/[0.1] yellow:hover:bg-yellow/[0.1] pink:hover:bg-pink/[0.1] purple:hover:bg-purple/[0.1] orange:hover:bg-orange/[0.1] green:hover:bg-green/[0.1];
 }
 
+.enabled-hover-shadow-accent {
+    @apply blue:enabled:hover:bg-blue/[0.1] yellow:enabled:hover:bg-yellow/[0.1] pink:enabled:hover:bg-pink/[0.1] purple:enabled:hover:bg-purple/[0.1] orange:enabled:hover:bg-orange/[0.1] green:enabled:hover:bg-green/[0.1];
+}
+
 .shadow-popup {
     @apply shadow-[0_0_15px_0_rgba(255,255,255,0.2),0_0_3px_1px_rgba(255,255,255,0.15)] light:shadow-[0_0_15px_0_rgba(101,119,134,0.2),0_0_3px_1px_rgba(101,119,134,0.15)];
 }

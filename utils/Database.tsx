@@ -61,3 +61,14 @@ export const unfollowUser = async (followedUser: string, follower: string) => {
     console.info("Request: Unfollow");
     error && console.log(error);
 };
+
+export const createTweet = async (authorID: string, text: string) => {
+    const { error } = await supabase.rpc("create_tweet", {
+        _text: text,
+        _author_id: authorID,
+        _conversation_id: null,
+    });
+
+    console.info("Creating tweet");
+    error && console.log(error);
+};
