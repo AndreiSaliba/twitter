@@ -36,10 +36,10 @@ const ComposeTweet = () => {
             </div>
 
             <div className="w-full max-w-[511px]">
-                <div className="w-full pt-[19px]">
+                <div className="w-full pt-[15px]">
                     <span
                         ref={composeRef}
-                        className="peer max-w-[511px] break-words py-1 pl-0.5 text-[19px] leading-[23px] text-[#E7E9EA] outline-none before:empty:text-[#71767B] before:empty:content-[attr(placeholder)]"
+                        className="peer inline-block w-full max-w-[511px] break-words py-1 pl-0.5 text-[19px] leading-[23px] outline-none before:empty:content-[attr(placeholder)] light:text-[#0F1419] light:before:empty:text-[#8B98A5] dim:text-[#F7F9F9] dim:before:empty:text-[#8B98A5] dark:text-[#E7E9EA] dark:before:empty:text-[#71767B]"
                         placeholder="What&#x2019;s happening?"
                         contentEditable
                         onInput={(e) =>
@@ -53,7 +53,7 @@ const ComposeTweet = () => {
                         }
                     />
 
-                    <div className="-ml-2 mt-[13px] h-px w-full peer-focus:light:bg-[#eff3f4] peer-focus:dim:bg-[#38444d] peer-focus:dark:bg-[#2f3336]"></div>
+                    <div className="-ml-2 mt-[11px] h-px w-full light:peer-focus:bg-[#eff3f4] dim:peer-focus:bg-[#38444d] dark:peer-focus:bg-[#2f3336]" />
                     <div className="-ml-px flex flex-row items-end justify-between">
                         <div className="mt-[11px] flex w-full flex-row">
                             <div className="mr-0.5 h-full max-h-[32px] w-full max-w-[32px]">

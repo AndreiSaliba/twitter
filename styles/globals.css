@@ -4,24 +4,21 @@
 
 @font-face {
     font-family: "TwitterChirp";
-    src: url("https://abs.twimg.com/fonts/v2/chirp-regular-web.woff")
-        format("woff");
+    src: url("../public/fonts/chirp-regular-web.woff") format("woff");
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: "TwitterChirp";
-    src: url("https://abs.twimg.com/fonts/v2/chirp-bold-web.woff")
-        format("woff");
+    src: url("../public/fonts/chirp-bold-web.woff") format("woff");
     font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
     font-family: "TwitterChirp";
-    src: url("https://abs.twimg.com/fonts/v2/chirp-heavy-web.woff")
-        format("woff");
+    src: url("../public/fonts/chirp-heavy-web.woff") format("woff");
     font-weight: 900;
     font-style: normal;
 }
