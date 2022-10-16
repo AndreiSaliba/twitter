@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@context/Auth";
 import Button from "./Button";
-import { createTweet } from "@utils/Database";
+import { useTweets } from "@context/Tweets";
 
 const ComposeTweet = () => {
     const { currentUser } = useAuth();
+    const { createTweet } = useTweets();
     const composeRef = useRef(null);
 
     const [composeTweetInput, setComposeTweetInput] = useState<string>();
@@ -15,7 +16,7 @@ const ComposeTweet = () => {
     }, []);
 
     return (
-        <div className="mb-[10px] flex h-min min-h-[102px] w-full flex-row items-start border-b px-[15px] pt-1 pb-[13px] light:border-[#eff3f4] dim:border-[#38444d] dark:border-[#2f3336]">
+        <div className="flex h-min min-h-[102px] w-full flex-row items-start border-b px-[15px] pt-1 pb-[13px] light:border-[#eff3f4] dim:border-[#38444d] dark:border-[#2f3336]">
             <div className="mt-1 mr-[11px] min-h-[46px] min-w-[46px]">
                 {!isSSR && (
                     <Image
@@ -39,7 +40,7 @@ const ComposeTweet = () => {
                 <div className="w-full pt-[15px]">
                     <span
                         ref={composeRef}
-                        className="peer inline-block w-full max-w-[511px] break-words py-1 pl-0.5 text-[19px] leading-[23px] outline-none before:empty:content-[attr(placeholder)] light:text-[#0F1419] light:before:empty:text-[#8B98A5] dim:text-[#F7F9F9] dim:before:empty:text-[#8B98A5] dark:text-[#E7E9EA] dark:before:empty:text-[#71767B]"
+                        className="peer inline-block max-h-[712px] w-full max-w-[511px] overflow-y-scroll whitespace-pre-wrap break-words py-1 pl-0.5 text-[19px] leading-[23px] outline-none before:empty:content-[attr(placeholder)] light:text-[#0F1419] light:before:empty:text-[#8B98A5] dim:text-[#F7F9F9] dim:before:empty:text-[#8B98A5] dark:text-[#E7E9EA] dark:before:empty:text-[#71767B]"
                         placeholder="What&#x2019;s happening?"
                         contentEditable
                         onInput={(e) =>
@@ -51,7 +52,7 @@ const ComposeTweet = () => {
                         onCut={(e) =>
                             setComposeTweetInput(e.currentTarget.innerText)
                         }
-                    />
+                    ></span>
 
                     <div className="-ml-2 mt-[11px] h-px w-full light:peer-focus:bg-[#eff3f4] dim:peer-focus:bg-[#38444d] dark:peer-focus:bg-[#2f3336]" />
                     <div className="-ml-px flex flex-row items-end justify-between">
@@ -190,7 +191,8 @@ const ComposeTweet = () => {
                             }}
                             disabled={
                                 composeTweetInput == null ||
-                                composeTweetInput == ""
+                                composeTweetInput == "" ||
+                                composeTweetInput.length > 260
                             }
                         >
                             Tweet

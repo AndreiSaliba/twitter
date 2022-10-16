@@ -1,5 +1,5 @@
 import { supabase } from "@utils/supabaseClient";
-import { UserPageProfile } from "./types";
+import { TweetType, UserPageProfile } from "./types";
 
 export const getUser = async (
     username: string,
@@ -40,6 +40,7 @@ export const updateUserProfile = async (
 
     console.info("Request: Update Profile");
     error && console.log(error);
+    return;
 };
 
 export const followUser = async (followedUser: string, follower: string) => {
@@ -50,6 +51,7 @@ export const followUser = async (followedUser: string, follower: string) => {
 
     console.info("Request: Follow");
     error && console.log(error);
+    return;
 };
 
 export const unfollowUser = async (followedUser: string, follower: string) => {
@@ -60,9 +62,10 @@ export const unfollowUser = async (followedUser: string, follower: string) => {
 
     console.info("Request: Unfollow");
     error && console.log(error);
+    return;
 };
 
-export const createTweet = async (authorID: string, text: string) => {
+export const create_tweet = async (authorID: string, text: string) => {
     const { error } = await supabase.rpc("create_tweet", {
         _text: text,
         _author_id: authorID,
@@ -71,4 +74,25 @@ export const createTweet = async (authorID: string, text: string) => {
 
     console.info("Creating tweet");
     error && console.log(error);
+    return;
+};
+
+export const getTweets = async (userID: string) => {
+    const { data, error } = await supabase.rpc("get_tweets", {
+        _user_id: userID,
+    });
+
+    console.info("Loading Tweets");
+    error && console.log(error);
+    return data as TweetType[];
+};
+
+export const getUserTweets = async (username: string) => {
+    const { data, error } = await supabase.rpc("get_user_tweets", {
+        _username: username,
+    });
+
+    console.info("Loading User Tweets");
+    error && console.log(error);
+    return data as TweetType[];
 };

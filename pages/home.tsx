@@ -4,11 +4,14 @@ import { useAuth } from "@context/Auth";
 import Header from "@components/Header";
 import HomeLayout from "@layouts/HomeLayout";
 import ComposeTweet from "@components/ComposeTweet";
+import Tweet from "@components/Tweet";
+import { useTweets } from "@context/Tweets";
 
 const Home = () => {
     const { session } = useAuth();
-    const router = useRouter();
+    const { tweets } = useTweets();
 
+    const router = useRouter();
     useEffect(() => {
         !session && router.push("/");
     }, [session, router]);
@@ -16,8 +19,12 @@ const Home = () => {
     return (
         <>
             <Header variant="home" />
-            <div className="h-[2000px] w-full bg-transparent">
+            <div className="min-h-[1800px] w-full bg-transparent">
                 <ComposeTweet />
+                {tweets &&
+                    tweets.map((tweet, index) => (
+                        <Tweet key={index} data={tweet} />
+                    ))}
             </div>
         </>
     );

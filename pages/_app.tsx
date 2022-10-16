@@ -5,8 +5,9 @@ import { Toaster, resolveValue } from "react-hot-toast";
 import { supabase } from "@utils/supabaseClient";
 import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
-import "@styles/globals.css";
+import { TweetsProvider } from "@context/Tweets";
 import DisplayModal from "@components/modals/DisplayModal";
+import "@styles/globals.css";
 
 type ComponentWithPageLayout = AppProps & {
     Component: AppProps["Component"] & {
@@ -30,27 +31,29 @@ export default function MyApp({
             </Head>
             <ThemeProvider>
                 <AuthProvider>
-                    <Toaster position="bottom-center">
-                        {(t) => (
-                            <div
-                                className={`rounded-[5px] py-2.5 px-3 leading-none text-white ${
-                                    supabase.auth.session()
-                                        ? "bg-accent"
-                                        : "bg-blue"
-                                }`}
-                            >
-                                {resolveValue(t.message, t)}
-                            </div>
-                        )}
-                    </Toaster>
-                    {Component.PageLayout ? (
-                        <Component.PageLayout>
+                    <TweetsProvider>
+                        <Toaster position="bottom-center">
+                            {(t) => (
+                                <div
+                                    className={`rounded-[5px] py-2.5 px-3 leading-none text-white ${
+                                        supabase.auth.session()
+                                            ? "bg-accent"
+                                            : "bg-blue"
+                                    }`}
+                                >
+                                    {resolveValue(t.message, t)}
+                                </div>
+                            )}
+                        </Toaster>
+                        {Component.PageLayout ? (
+                            <Component.PageLayout>
+                                <Component {...pageProps} />
+                            </Component.PageLayout>
+                        ) : (
                             <Component {...pageProps} />
-                        </Component.PageLayout>
-                    ) : (
-                        <Component {...pageProps} />
-                    )}
-                    <DisplayModal />
+                        )}
+                        <DisplayModal />
+                    </TweetsProvider>
                 </AuthProvider>
             </ThemeProvider>
         </>

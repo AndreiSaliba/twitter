@@ -352,7 +352,7 @@ export const Sidebar: FC = () => {
                         ref={setUserPopperElement}
                         style={userStyles.popper}
                         {...userAttributes.popper}
-                        className="bg-theme shadow-popup w-[300px] rounded-2xl py-[11px]"
+                        className="bg-theme shadow-popup relative z-[999] w-[300px] rounded-2xl py-[11px]"
                     >
                         <Menu.Item>
                             <div className="flex flex-row justify-between px-[15px] py-[11px]">

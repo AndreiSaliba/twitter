@@ -5,16 +5,23 @@ import Image from "next/future/image";
 import { Tab } from "@headlessui/react";
 import { Linkify, LinkifyCore } from "react-easy-linkify";
 import { useAuth } from "@context/Auth";
-import { getUser, followUser, unfollowUser } from "@utils/Database";
-import { UserProfile } from "@utils/types";
+import {
+    getUser,
+    followUser,
+    unfollowUser,
+    getUserTweets,
+} from "@utils/Database";
+import { TweetType, UserProfile } from "@utils/types";
 import Header from "@components/Header";
 import Button from "@components/Button";
+import Tweet from "@components/Tweet";
 import HomeLayout from "@layouts/HomeLayout";
 
 const User = () => {
     const [userProfile, setUserProfile] = useState<UserProfile>();
     const [sessionUserProfile, setSessionUserProfile] = useState<UserProfile>();
     const [following, setFollowing] = useState<boolean>(false);
+    const [tweets, setTweets] = useState<TweetType[]>();
 
     const { session, currentUser, refreshCurrentUser } = useAuth();
 
@@ -60,6 +67,13 @@ const User = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUser]);
 
+    useEffect(() => {
+        if (user && session) {
+            getUserTweets(user as string).then((data) => setTweets(data));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
+
     LinkifyCore.PluginManager.enableMention();
     LinkifyCore.PluginManager.enableHashtag();
 
@@ -77,19 +91,21 @@ const User = () => {
                         userProfile?.profile_banner_url.match(
                             /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
                         ) ? (
-                            <Image
-                                src={userProfile.profile_banner_url}
-                                alt="Banner"
-                                width="600"
-                                height="200"
-                                className="-z-0 aspect-[3/1] object-cover"
-                            />
+                            <div className="relative -z-10">
+                                <Image
+                                    src={userProfile.profile_banner_url}
+                                    alt="Banner"
+                                    width="600"
+                                    height="200"
+                                    className="-z-10 aspect-[3/1] object-cover"
+                                />
+                            </div>
                         ) : (
-                            <div className="z-0 aspect-[3/1] max-h-[200px] w-auto max-w-full bg-[#333639] light:bg-[#cfd9de] dim:bg-[#425364]" />
+                            <div className="relative -z-10 aspect-[3/1] max-h-[200px] w-auto max-w-full bg-[#333639] light:bg-[#cfd9de] dim:bg-[#425364]" />
                         )}
 
                         <div className="absolute left-[15px] -bottom-[68px] flex h-[142px] w-1/4 items-center">
-                            <div className="bg-theme border-theme max-w-[142px] rounded-full border-4 xs:border-2">
+                            <div className="bg-theme border-theme -z-10 max-w-[142px] rounded-full border-4 xs:border-2">
                                 <Image
                                     src={
                                         userProfile?.profile_image_url &&
@@ -435,8 +451,18 @@ const User = () => {
                         </Tab.List>
                         <div className="h-px w-full light:bg-[#eff3f4] dim:bg-[#38444d] dark:bg-[#2f3336]" />
                         <Tab.Panels>
-                            <Tab.Panel></Tab.Panel>
-                            <Tab.Panel></Tab.Panel>
+                            <Tab.Panel>
+                                {tweets &&
+                                    tweets.map((tweet, index) => (
+                                        <Tweet key={index} data={tweet} />
+                                    ))}
+                            </Tab.Panel>
+                            <Tab.Panel>
+                                {tweets &&
+                                    tweets.map((tweet, index) => (
+                                        <Tweet key={index} data={tweet} />
+                                    ))}
+                            </Tab.Panel>
                             <Tab.Panel></Tab.Panel>
                             <Tab.Panel></Tab.Panel>
                         </Tab.Panels>

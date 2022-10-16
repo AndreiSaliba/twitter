@@ -25,3 +25,23 @@ export interface UserPageProfile {
     isFollowedByRequest?: boolean;
     currentUser?: boolean;
 }
+
+export interface TweetType {
+    tweet: {
+        tweet_id: string;
+        public_id: bigint;
+        author_id: string;
+        created_at: string;
+        like_count: number;
+        tweet_text: string;
+        quote_count: number;
+        reply_count: number;
+        retweet_count: number;
+        reply_settings: "everyone";
+        conversation_id: string;
+        referenced_tweets: any;
+        in_reply_to_user_id: number;
+    };
+    author: UserProfile;
+    isFollowedByRequest?: boolean;
+}
