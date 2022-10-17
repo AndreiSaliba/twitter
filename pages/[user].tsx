@@ -77,6 +77,24 @@ const User = () => {
     LinkifyCore.PluginManager.enableMention();
     LinkifyCore.PluginManager.enableHashtag();
 
+    const follow = () => {
+        followUser(userProfile.userid, sessionUserProfile.userid);
+        setUserProfile((prevState) => ({
+            ...prevState,
+            followers_count: userProfile.followers_count + 1,
+        }));
+        setFollowing(true);
+    };
+
+    const unfollow = () => {
+        unfollowUser(userProfile.userid, sessionUserProfile.userid);
+        setUserProfile((prevState) => ({
+            ...prevState,
+            followers_count: userProfile.followers_count - 1,
+        }));
+        setFollowing(false);
+    };
+
     return (
         <>
             {userProfile && (
@@ -174,39 +192,11 @@ const User = () => {
                                         </svg>
                                     </div>
                                     {following ? (
-                                        <div
-                                            onClick={() => {
-                                                unfollowUser(
-                                                    userProfile.userid,
-                                                    sessionUserProfile.userid
-                                                );
-                                                setUserProfile((prevState) => ({
-                                                    ...prevState,
-                                                    followers_count:
-                                                        userProfile.followers_count -
-                                                        1,
-                                                }));
-                                                setFollowing(false);
-                                            }}
-                                        >
+                                        <div onClick={unfollow}>
                                             <Button variant="following" />
                                         </div>
                                     ) : (
-                                        <div
-                                            onClick={() => {
-                                                followUser(
-                                                    userProfile.userid,
-                                                    sessionUserProfile.userid
-                                                );
-                                                setUserProfile((prevState) => ({
-                                                    ...prevState,
-                                                    followers_count:
-                                                        userProfile.followers_count +
-                                                        1,
-                                                }));
-                                                setFollowing(true);
-                                            }}
-                                        >
+                                        <div onClick={follow}>
                                             <Button variant="follow" />
                                         </div>
                                     )}
@@ -467,13 +457,25 @@ const User = () => {
                             <Tab.Panel>
                                 {tweets &&
                                     tweets.map((tweet, index) => (
-                                        <Tweet key={index} data={tweet} />
+                                        <Tweet
+                                            key={index}
+                                            data={tweet}
+                                            followingState={following}
+                                            follow={follow}
+                                            unfollow={unfollow}
+                                        />
                                     ))}
                             </Tab.Panel>
                             <Tab.Panel>
                                 {tweets &&
                                     tweets.map((tweet, index) => (
-                                        <Tweet key={index} data={tweet} />
+                                        <Tweet
+                                            key={index}
+                                            data={tweet}
+                                            followingState={following}
+                                            follow={follow}
+                                            unfollow={unfollow}
+                                        />
                                     ))}
                             </Tab.Panel>
                             <Tab.Panel></Tab.Panel>
