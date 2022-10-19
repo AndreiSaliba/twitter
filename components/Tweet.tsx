@@ -49,51 +49,60 @@ const Tweet: FC<TweetProps> = ({ data, followingState, follow, unfollow }) => {
 
     return (
         <div className="flex flex-row border-b px-[15px] pt-[11px] light:border-[#eff3f4] dim:border-[#38444d] dark:border-[#2F3336]">
-            <div className="-z-10 mt-px mr-[11px] min-w-[46px]">
-                <Image
-                    src={
-                        author?.profile_image_url &&
-                        author?.profile_image_url.match(
-                            /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
-                        )
-                            ? author?.profile_image_url
-                            : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                    }
-                    alt="Profile Picture"
-                    width={46}
-                    height={46}
-                    className="aspect-square rounded-full object-cover"
-                />
-            </div>
+            <Link href={`/${author.username}`}>
+                <a className="mt-px mr-[11px] min-w-[46px]">
+                    <Image
+                        src={
+                            author?.profile_image_url &&
+                            author?.profile_image_url.match(
+                                /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+                            )
+                                ? author?.profile_image_url
+                                : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                        }
+                        alt="Profile Picture"
+                        width={46}
+                        height={46}
+                        className="aspect-square cursor-pointer rounded-full object-cover -z-10"
+                    />
+                </a>
+            </Link>
 
             <div className="w-full pb-[11px]">
                 <div className="-my-[6px] flex w-full flex-row items-center justify-between truncate bg-clip-padding">
                     <div className="flex items-center truncate text-sm leading-[19px]">
-                        <span className="truncate font-bold text-[#E9EAE7] light:text-[#141923]">
-                            {author.name}
-                        </span>
-                        {author.verified && (
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-label="Verified account"
-                                className="ml-0.5 h-[17.5xp] w-[17.5px] light:fill-blue dim:fill-white dark:fill-[#d6d9db]"
-                            >
-                                <g>
-                                    <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"></path>
-                                </g>
-                            </svg>
-                        )}
+                        <Link href={`/${author.username}`} shallow>
+                            <span className="flex cursor-pointer items-center hover:underline">
+                                <a className="truncate font-bold text-[#E9EAE7] light:text-[#141923]">
+                                    {author.name}
+                                </a>
+                                {author.verified && (
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        aria-label="Verified account"
+                                        className="ml-0.5 h-[17.5xp] w-[17.5px] light:fill-blue dim:fill-white dark:fill-[#d6d9db]"
+                                    >
+                                        <g>
+                                            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"></path>
+                                        </g>
+                                    </svg>
+                                )}
+                            </span>
+                        </Link>
 
                         <span className="flex flex-row truncate light:text-[#536471] dim:text-[#8B98A5] dark:text-[#71767C]">
-                            <span className="ml-1 truncate">
-                                @{author.username}
-                            </span>
+                            <Link href={`/${author.username}`}>
+                                <a className="ml-1 cursor-pointer truncate">
+                                    @{author.username}
+                                </a>
+                            </Link>
                             <span className="truncate px-1">·</span>
                             <span>
                                 {moment.utc(tweet.created_at).fromNow(true)}
                             </span>
                         </span>
                     </div>
+                    
                     <Menu>
                         <Menu.Button
                             ref={setMoreReferenceElement}
