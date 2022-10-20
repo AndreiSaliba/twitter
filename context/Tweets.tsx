@@ -30,6 +30,7 @@ export const TweetsProvider = ({ children }) => {
                 tweetIndex != -1 && temp.splice(tweetIndex, 1);
                 setTweets(temp);
             });
+        return;
     };
 
     const refreshTweets = () =>

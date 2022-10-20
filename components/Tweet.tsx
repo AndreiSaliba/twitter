@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, SetStateAction, useState } from "react";
 import Image from "next/image";
 import { TweetType } from "@utils/types";
 import moment from "moment";
@@ -8,16 +8,25 @@ import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { useAuth } from "@context/Auth";
 import { useTweets } from "@context/Tweets";
-import { followUser, unfollowUser } from "@utils/Database";
+import { followUser, getUserTweets, unfollowUser } from "@utils/Database";
 
 interface TweetProps {
     data: TweetType;
     followingState?: boolean;
     follow?: () => void;
     unfollow?: () => void;
+    onUserProfile?: boolean;
+    setUserTweets?: (value: SetStateAction<TweetType[]>) => void;
 }
 
-const Tweet: FC<TweetProps> = ({ data, followingState, follow, unfollow }) => {
+const Tweet: FC<TweetProps> = ({
+    data,
+    followingState,
+    follow,
+    unfollow,
+    onUserProfile,
+    setUserTweets,
+}) => {
     const { tweet, author } = data;
     const { currentUser } = useAuth();
 
@@ -63,7 +72,7 @@ const Tweet: FC<TweetProps> = ({ data, followingState, follow, unfollow }) => {
                         alt="Profile Picture"
                         width={46}
                         height={46}
-                        className="aspect-square cursor-pointer rounded-full object-cover -z-10"
+                        className="-z-10 aspect-square cursor-pointer rounded-full object-cover"
                     />
                 </a>
             </Link>
@@ -102,7 +111,7 @@ const Tweet: FC<TweetProps> = ({ data, followingState, follow, unfollow }) => {
                             </span>
                         </span>
                     </div>
-                    
+
                     <Menu>
                         <Menu.Button
                             ref={setMoreReferenceElement}
@@ -138,7 +147,16 @@ const Tweet: FC<TweetProps> = ({ data, followingState, follow, unfollow }) => {
                                     <div
                                         className="flex cursor-pointer flex-row items-center fill-[#F42121] p-[15px] text-sm leading-[19px] text-[#F42121] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#080808]"
                                         onClick={() =>
-                                            deleteTweet(tweet.tweet_id)
+                                            deleteTweet(tweet.tweet_id).then(
+                                                () => {
+                                                    onUserProfile &&
+                                                        getUserTweets(
+                                                            currentUser?.username as string
+                                                        ).then((data) => {
+                                                            setUserTweets(data);
+                                                        });
+                                                }
+                                            )
                                         }
                                     >
                                         <svg

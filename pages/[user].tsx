@@ -463,6 +463,8 @@ const User = () => {
                                             followingState={following}
                                             follow={follow}
                                             unfollow={unfollow}
+                                            onUserProfile={true}
+                                            setUserTweets={setTweets}
                                         />
                                     ))}
                             </Tab.Panel>
@@ -475,6 +477,8 @@ const User = () => {
                                             followingState={following}
                                             follow={follow}
                                             unfollow={unfollow}
+                                            onUserProfile={true}
+                                            setUserTweets={setTweets}
                                         />
                                     ))}
                             </Tab.Panel>
