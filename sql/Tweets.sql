@@ -15,6 +15,37 @@ CREATE TABLE public.tweets
 	quote_count         int          NOT NULL DEFAULT 0
 );
 
+
+-- Twitter ID Function
+CREATE SEQUENCE public.global_id_seq;
+ALTER SEQUENCE public.global_id_seq OWNER TO postgres;
+
+CREATE OR REPLACE FUNCTION public.gen_twitter_id()
+	RETURNS bigint
+	LANGUAGE 'plpgsql'
+AS
+$BODY$
+DECLARE
+	our_epoch  bigint := 1477420021721;
+	seq_id     bigint;
+	now_millis bigint;
+	shard_id   int    := 1;
+	result     bigint := 0;
+BEGIN
+	SELECT NEXTVAL('public.global_id_seq') % 1024 INTO seq_id;
+
+	SELECT FLOOR(EXTRACT(EPOCH FROM CLOCK_TIMESTAMP()) * 1000) INTO now_millis;
+	result := (now_millis - our_epoch) << 23;
+	result := result | (shard_id << 10);
+	result := result | (seq_id);
+	RETURN result;
+END;
+$BODY$;
+
+ALTER FUNCTION public.gen_twitter_id() OWNER TO postgres;
+
+SELECT public.gen_twitter_id()
+
 -- Create Tweet Function
 CREATE OR REPLACE FUNCTION public.create_tweet(_text varchar(200), _author_id uuid, _conversation_id bigint)
 	RETURNS void

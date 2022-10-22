@@ -9,6 +9,7 @@ import { usePopper } from "react-popper";
 import { useAuth } from "@context/Auth";
 import { useTweets } from "@context/Tweets";
 import { followUser, getUserTweets, unfollowUser } from "@utils/Database";
+import toast from "react-hot-toast";
 
 interface TweetProps {
     data: TweetType;
@@ -48,6 +49,31 @@ const Tweet: FC<TweetProps> = ({
                         fallbackPlacements: ["bottom-end"],
                         altBoundary: true,
                     },
+                },
+            ],
+        }
+    );
+
+    const [shareReferenceElement, setShareReferenceElement] = useState(null);
+    const [sharePopperElement, setSharePopperElement] = useState(null);
+    const { styles: shareStyles, attributes: shareAttributes } = usePopper(
+        shareReferenceElement,
+        sharePopperElement,
+        {
+            placement: "bottom-end",
+            strategy: "fixed",
+            modifiers: [
+                {
+                    name: "flip",
+                    options: {
+                        allowedAutoPlacements: ["top-end"],
+                        fallbackPlacements: ["bottom-end"],
+                        altBoundary: true,
+                    },
+                },
+                {
+                    name: "offset",
+                    options: { offset: [0, -28] },
                 },
             ],
         }
@@ -174,7 +200,7 @@ const Tweet: FC<TweetProps> = ({
                             ) : (
                                 <Menu.Item>
                                     <div
-                                        className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
+                                        className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
                                         onClick={() =>
                                             followingState != null
                                                 ? followingState
@@ -191,34 +217,39 @@ const Tweet: FC<TweetProps> = ({
                                                   ).then(() => refreshTweets())
                                         }
                                     >
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            className="mr-[11px] w-[17.5px] max-w-full fill-[#71767B]"
-                                        >
-                                            {(
-                                                followingState != null
-                                                    ? followingState
-                                                    : data.isFollowedByRequest
-                                            ) ? (
-                                                <g>
-                                                    <path d="M20.083 6.173l2.323 2.323c.293.293.768.293 1.06 0s.294-.768 0-1.06l-2.32-2.326 2.322-2.323c.293-.294.293-.77 0-1.062s-.768-.293-1.06 0L20.082 4.05 17.76 1.73c-.293-.293-.768-.293-1.06 0-.147.146-.22.338-.22.53s.072.384.22.53l2.32 2.32-2.32 2.325c-.147.146-.22.338-.22.53s.072.384.22.53c.292.293.767.293 1.06 0l2.323-2.32zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.645-4.513-2.53 0-4.267 1.687-4.646 4.513-.273 2.025-.01 3.462.805 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-.54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z"></path>
-                                                </g>
-                                            ) : (
-                                                <g>
-                                                    <path d="M23.152 3.483h-2.675V.81c0-.415-.336-.75-.75-.75s-.75.335-.75.75v2.674H16.3c-.413 0-.75.336-.75.75s.337.75.75.75h2.677V7.66c0 .413.336.75.75.75s.75-.337.75-.75V4.982h2.675c.414 0 .75-.336.75-.75s-.336-.75-.75-.75zM8.417 11.816c1.355 0 2.872-.15 3.84-1.256.813-.93 1.077-2.367.806-4.392-.38-2.826-2.116-4.513-4.646-4.513S4.15 3.342 3.77 6.168c-.27 2.025-.007 3.462.807 4.393.968 1.108 2.485 1.257 3.84 1.257zm-3.16-5.448c.16-1.2.786-3.212 3.16-3.212 2.373 0 2.998 2.013 3.16 3.212.207 1.55.056 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.256-.223-2.71-.743c-.507-.578-.658-1.656-.45-3.205zm11.44 12.867c-.88-3.525-4.283-5.988-8.28-5.988-3.998 0-7.403 2.463-8.28 5.988-.172.693-.03 1.4.395 1.94.408.522 1.04.822 1.733.822H14.57c.69 0 1.323-.3 1.73-.82.425-.54.568-1.247.396-1.942zm-1.577 1.018c-.126.16-.316.245-.55.245H2.264c-.235 0-.426-.085-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.113 1.994 6.824 4.85c.06.24.017.48-.12.655z"></path>
-                                                </g>
-                                            )}
-                                        </svg>
-                                        <span>
-                                            {(
-                                                followingState != null
-                                                    ? followingState
-                                                    : data.isFollowedByRequest
-                                            )
-                                                ? "Unfollow"
-                                                : "Follow"}{" "}
-                                            @{author.username}
-                                        </span>
+                                        {(
+                                            followingState != null
+                                                ? followingState
+                                                : data.isFollowedByRequest
+                                        ) ? (
+                                            <>
+                                                <svg
+                                                    viewBox="0 0 24 24"
+                                                    className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                                >
+                                                    <g>
+                                                        <path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm12.586 3l-2.043-2.04 1.414-1.42L20 7.59l2.043-2.05 1.414 1.42L21.414 9l2.043 2.04-1.414 1.42L20 10.41l-2.043 2.05-1.414-1.42L18.586 9zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"></path>
+                                                    </g>
+                                                </svg>
+                                                <span>
+                                                    Unfollow @{author.username}
+                                                </span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg
+                                                    viewBox="0 0 24 24"
+                                                    className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                                >
+                                                    <g>
+                                                        <path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm13 4v3h2v-3h3V8h-3V5h-2v3h-3v2h3zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"></path>
+                                                    </g>
+                                                </svg>
+                                                <span>
+                                                    Follow @{author.username}
+                                                </span>
+                                            </>
+                                        )}
                                     </div>
                                 </Menu.Item>
                             )}
@@ -302,20 +333,74 @@ const Tweet: FC<TweetProps> = ({
                             </g>
                         </svg>
                     </button>
-                    <button
-                        id="share-button"
-                        className="group w-fit rounded-full p-[8px] hover:bg-[#1d9bf0]/10"
-                    >
-                        <svg
-                            className="w-min min-w-[17.5px] group-hover:fill-[#1d9bf0] light:fill-[#536471] dim:fill-[#9092A3] dark:fill-[#71767C]"
-                            viewBox="0 0 24 24"
+
+                    <Menu>
+                        <Menu.Button
+                            ref={setShareReferenceElement}
+                            as="div"
+                            aria-label="More Options Menu"
+                            className=""
                         >
-                            <g>
-                                <path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"></path>
-                                <path d="M19.708 21.944H4.292C3.028 21.944 2 20.916 2 19.652V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 .437.355.792.792.792h15.416c.437 0 .792-.355.792-.792V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 1.264-1.028 2.292-2.292 2.292z"></path>
-                            </g>
-                        </svg>
-                    </button>
+                            <button
+                                id="share-button"
+                                className="group w-fit rounded-full p-[8px] hover:bg-[#1d9bf0]/10"
+                            >
+                                <svg
+                                    className="w-min min-w-[17.5px] group-hover:fill-[#1d9bf0] light:fill-[#536471] dim:fill-[#9092A3] dark:fill-[#71767C]"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <g>
+                                        <path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"></path>
+                                        <path d="M19.708 21.944H4.292C3.028 21.944 2 20.916 2 19.652V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 .437.355.792.792.792h15.416c.437 0 .792-.355.792-.792V14c0-.414.336-.75.75-.75s.75.336.75.75v5.652c0 1.264-1.028 2.292-2.292 2.292z"></path>
+                                    </g>
+                                </svg>
+                            </button>
+                        </Menu.Button>
+                        <Menu.Items
+                            ref={setSharePopperElement}
+                            style={shareStyles.popper}
+                            {...shareAttributes.popper}
+                            as="div"
+                            className="bg-theme shadow-popup z-50 w-[210px] overflow-hidden rounded-[4px]"
+                        >
+                            <Menu.Item>
+                                <div
+                                    className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(
+                                            `${document.location.origin}/${
+                                                author.username
+                                            }/status/${BigInt(tweet.public_id)}`
+                                        );
+                                        toast("Copied to clipboard");
+                                    }}
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                    >
+                                        <g>
+                                            <path d="M18.36 5.64c-1.95-1.96-5.11-1.96-7.07 0L9.88 7.05 8.46 5.64l1.42-1.42c2.73-2.73 7.16-2.73 9.9 0 2.73 2.74 2.73 7.17 0 9.9l-1.42 1.42-1.41-1.42 1.41-1.41c1.96-1.96 1.96-5.12 0-7.07zm-2.12 3.53l-7.07 7.07-1.41-1.41 7.07-7.07 1.41 1.41zm-12.02.71l1.42-1.42 1.41 1.42-1.41 1.41c-1.96 1.96-1.96 5.12 0 7.07 1.95 1.96 5.11 1.96 7.07 0l1.41-1.41 1.42 1.41-1.42 1.42c-2.73 2.73-7.16 2.73-9.9 0-2.73-2.74-2.73-7.17 0-9.9z"></path>
+                                        </g>
+                                    </svg>
+                                    <span>Copy link to Tweet</span>
+                                </div>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <div className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                    >
+                                        <g>
+                                            <path d="M17 3V0h2v3h3v2h-3v3h-2V5h-3V3h3zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V11h2v11.94l-8-5.71-8 5.71V4.5C4 3.12 5.119 2 6.5 2h4.502v2H6.5z"></path>
+                                        </g>
+                                    </svg>
+                                    <span>Bookmark</span>
+                                </div>
+                            </Menu.Item>
+                        </Menu.Items>
+                    </Menu>
                 </div>
             </div>
         </div>
