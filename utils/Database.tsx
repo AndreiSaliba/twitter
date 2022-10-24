@@ -17,6 +17,22 @@ export const getUser = async (
     return data as unknown as UserPageProfile;
 };
 
+export const getUserByID = async (
+    userID: string,
+    userRequestingProfile: string
+) => {
+    const { data, error } = await supabase
+        .rpc("get_user_profile_by_userid", {
+            _userid: userID,
+            _user_requesting_profile: userRequestingProfile,
+        })
+        .select();
+
+    console.info("Request: Get user");
+    error && console.log(error);
+    return data as unknown as UserPageProfile;
+};
+
 export const updateUserProfile = async (
     userID: string,
     name: string,

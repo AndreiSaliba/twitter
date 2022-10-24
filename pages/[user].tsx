@@ -42,7 +42,7 @@ const User = () => {
             } else {
                 setSessionUserProfile(currentUser);
                 getUser(user as string, currentUser?.username).then((data) => {
-                    if (data) {
+                    if (data?.profile) {
                         setUserProfile(data.profile);
                         setFollowing(data.isFollowedByRequest);
                     } else {
@@ -54,6 +54,7 @@ const User = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
+    // Get Current User profile page
     useEffect(() => {
         if (currentUser && user) {
             if (
@@ -67,6 +68,7 @@ const User = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUser]);
 
+    // Get User Tweets
     useEffect(() => {
         if (user && session) {
             getUserTweets(user as string).then((data) => setTweets(data));

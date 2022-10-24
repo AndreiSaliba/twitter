@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
-import { getUser } from "@utils/Database";
+import { getUserByID } from "@utils/Database";
 import { UserProfile } from "@utils/types";
 import toast from "react-hot-toast";
 
@@ -75,11 +75,8 @@ export const AuthProvider = ({ children }) => {
 
     const refreshCurrentUser = async () => {
         session &&
-            getUser(
-                session?.user?.user_metadata?.userProfile.username,
-                session?.user?.user_metadata?.userProfile.username
-            ).then((data) => {
-                if (data && data.currentUser) {
+            getUserByID(session?.user?.id, session?.user?.id).then((data) => {
+                if (data && data?.profile?.userid === session.user.id) {
                     setCurrentUser(data.profile);
                 }
             });

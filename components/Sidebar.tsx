@@ -333,7 +333,7 @@ export const Sidebar: FC = () => {
                                                 </svg>
                                             )}
                                         </span>
-                                        <span className="text-sm font-medium leading-[22px] text-[#71767C]">
+                                        <span className="text-sm font-medium leading-[22px] text-[#71767C] dim:text-[#8B98A5]">
                                             {currentUser?.username
                                                 ? "@" + currentUser?.username
                                                 : ""}
@@ -394,7 +394,7 @@ export const Sidebar: FC = () => {
                                                 </svg>
                                             )}
                                         </span>
-                                        <span className="text-sm font-medium leading-[22px] text-[#71767C]">
+                                        <span className="text-sm font-medium leading-[22px] text-[#71767C] dim:text-[#8B98A5]">
                                             @{currentUser?.username}
                                         </span>
                                     </div>

@@ -60,10 +60,8 @@ function EditProfileModal() {
         router
             .push(
                 router.pathname === "/[user]"
-                    ? `/${router?.query?.user}`
-                    : router.pathname,
-                undefined,
-                { shallow: true }
+                    ? `/${username}`
+                    : router.pathname
             )
             .then(() =>
                 resetForm({

@@ -8,13 +8,18 @@ import Tweet from "@components/Tweet";
 import { useTweets } from "@context/Tweets";
 
 const Home = () => {
-    const { session } = useAuth();
+    const { session, refreshCurrentUser } = useAuth();
     const { tweets } = useTweets();
 
     const router = useRouter();
     useEffect(() => {
         !session && router.push("/");
     }, [session, router]);
+
+    useEffect(() => {
+        refreshCurrentUser();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <>

@@ -54,3 +54,42 @@ END;
 $$;
 
 SELECT update_userprofile('9bc533a7-bf4c-4cc1-9075-bc02d6dce16c', NULL, 'AndreiSaliba', NULL, NULL, NULL, NULL, NULL);
+
+
+-- Get User Profile by username
+CREATE OR REPLACE FUNCTION public.get_user_profile(_username varchar(15), _user_requesting_profile varchar(15))
+	RETURNS json
+	LANGUAGE plpgsql
+AS
+$$
+BEGIN
+	RETURN (SELECT JSON_BUILD_OBJECT(
+			               'profile', ((SELECT ROW_TO_JSON(p.*) FROM public.profile p WHERE p.username = _username)),
+			               'isFollowedByRequest', EXISTS(SELECT *
+			                                             FROM public.follows f
+			                                             WHERE f.followed = (SELECT userid
+			                                                                 FROM public.profile p
+			                                                                 WHERE p.username = _username)
+				                                           AND f.follower = (SELECT userid
+				                                                             FROM public.profile p
+				                                                             WHERE p.username = _user_requesting_profile))
+		               ));
+END;
+$$;
+
+-- Get User Profile by userid
+CREATE OR REPLACE FUNCTION public.get_user_profile_by_userid(_userid uuid, _user_requesting_profile uuid)
+	RETURNS json
+	LANGUAGE plpgsql
+AS
+$$
+BEGIN
+	RETURN (SELECT JSON_BUILD_OBJECT(
+			               'profile', ((SELECT ROW_TO_JSON(p.*) FROM public.profile p WHERE p.userid = _userid)),
+			               'isFollowedByRequest', EXISTS(SELECT *
+			                                             FROM public.follows f
+			                                             WHERE f.followed = _userid
+				                                           AND f.follower = _user_requesting_profile)
+		               ));
+END;
+$$;
