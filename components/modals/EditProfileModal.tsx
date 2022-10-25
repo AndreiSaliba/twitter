@@ -5,6 +5,7 @@ import Input from "@components/Input";
 import { useAuth } from "@context/Auth";
 import { Dialog } from "@headlessui/react";
 import { updateUserProfile } from "@utils/Database";
+import toast from "react-hot-toast";
 
 export interface EditProfileFormValues {
     name: string;
@@ -36,6 +37,14 @@ function EditProfileModal() {
         profileImageUrl,
         bannerImageUrl,
     }) => {
+        if (
+            !website.match(
+                /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+            )
+        ) {
+            toast("Url is not valid");
+            return;
+        }
         updateUserProfile(
             currentUser.userid,
             name,
@@ -59,9 +68,7 @@ function EditProfileModal() {
         });
         router
             .push(
-                router.pathname === "/[user]"
-                    ? `/${username}`
-                    : router.pathname
+                router.pathname === "/[user]" ? `/${username}` : router.pathname
             )
             .then(() =>
                 resetForm({
