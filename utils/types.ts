@@ -43,5 +43,8 @@ export interface TweetType {
         in_reply_to_user_id: number;
     };
     author: UserProfile;
-    isFollowedByRequest?: boolean;
+    user: {
+        followsAuthor: boolean;
+        bookmarkedTweet: boolean;
+    };
 }

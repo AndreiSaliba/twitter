@@ -44,7 +44,7 @@ $BODY$;
 
 ALTER FUNCTION public.gen_twitter_id() OWNER TO postgres;
 
-SELECT public.gen_twitter_id()
+SELECT public.gen_twitter_id();
 
 -- Create Tweet Function
 CREATE OR REPLACE FUNCTION public.create_tweet(_text varchar(200), _author_id uuid, _conversation_id bigint)
@@ -68,35 +68,48 @@ CREATE OR REPLACE FUNCTION public.get_tweets(_user_id uuid)
 AS
 $$
 BEGIN
-	RETURN (SELECT JSON_AGG(JSONB_BUILD_OBJECT('tweet', t.*, 'author', p.*, 'isFollowedByRequest',
-	                                           EXISTS(SELECT *
-	                                                  FROM public.follows f
-	                                                  WHERE f.followed = t.author_id
-		                                                AND f.follower = _user_id)))
-	        FROM (SELECT *
-	              FROM public.tweets
-	              WHERE author_id IN (SELECT followed FROM public.follows WHERE follower = _user_id)
-		             OR author_id = _user_id
-	              ORDER BY created_at DESC) t
-		             JOIN public.profile p ON t.author_id = p.userid);
+	RETURN
+		(SELECT JSON_AGG(JSON_BUILD_OBJECT('tweet', t.*,
+		                                   'author', p.*,
+		                                   'user', JSON_BUILD_OBJECT('followsAuthor', EXISTS(SELECT *
+		                                                                                     FROM public.follows f
+		                                                                                     WHERE f.followed = t.author_id
+			                                                                                   AND f.follower = _user_id),
+		                                                             'bookmarkedTweet', EXISTS(SELECT *
+		                                                                                       FROM public.bookmarks b
+		                                                                                       WHERE b.tweet_id = t.tweet_id
+			                                                                                     AND b.user_id = _user_id)))))
+		FROM (SELECT *
+		      FROM public.tweets
+		      WHERE author_id IN (SELECT followed FROM public.follows WHERE follower = _user_id)
+			     OR author_id = _user_id
+		      ORDER BY created_at DESC) t
+			JOIN PUBLIC.profile p ON t.author_id = p.userid;
 END;
 $$;
 
 SELECT get_tweets('867fab73-e4f3-4db3-bd37-93b327ec517b');
 
 -- Get User Tweets Function
-CREATE OR REPLACE FUNCTION public.get_user_tweets(_username varchar(15))
+CREATE OR REPLACE FUNCTION public.get_user_tweets(_username varchar(15), _requesting_user_id uuid)
 	RETURNS JSON
 AS
 $$
 BEGIN
-	RETURN (SELECT JSON_AGG(JSONB_BUILD_OBJECT('tweet', t.*, 'author', p.*))
-	        FROM (SELECT *
-	              FROM public.tweets
-	              WHERE author_id = (SELECT userid FROM public.profile p WHERE p.username = _username)
-	              ORDER BY created_at) t
-		             JOIN public.profile p ON t.author_id = p.userid);
+    RETURN
+		(SELECT JSON_AGG(JSON_BUILD_OBJECT('tweet', t.*,
+		                                   'author', p.*,
+		                                   'user', JSON_BUILD_OBJECT('followsAuthor', true,
+		                                                             'bookmarkedTweet', EXISTS(SELECT *
+		                                                                                       FROM public.bookmarks b
+		                                                                                       WHERE b.tweet_id = t.tweet_id
+			                                                                                     AND b.user_id = _requesting_user_id)))))
+		FROM (SELECT *
+		      FROM public.tweets
+		      WHERE author_id = (SELECT userid FROM public.profile p WHERE p.username = _username)
+		      ORDER BY created_at DESC) t
+			JOIN PUBLIC.profile p ON t.author_id = p.userid;
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT get_user_tweets('867fab73-e4f3-4db3-bd37-93b327ec517b');
+SELECT get_user_tweets('AndreiSaliba', '9bc533a7-bf4c-4cc1-9075-bc02d6dce16c');

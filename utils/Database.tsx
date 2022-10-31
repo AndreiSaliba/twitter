@@ -103,12 +103,65 @@ export const getTweets = async (userID: string) => {
     return data as TweetType[];
 };
 
-export const getUserTweets = async (username: string) => {
+export const getUserTweets = async (
+    username: string,
+    requestingUserID: string
+) => {
     const { data, error } = await supabase.rpc("get_user_tweets", {
         _username: username,
+        _requesting_user_id: requestingUserID,
     });
 
     console.info("Loading User Tweets");
+    error && console.log(error);
+    return data as TweetType[];
+};
+
+export const addBookmark = async (userID: string, tweetID: string) => {
+    console.log(userID, tweetID);
+    const { error } = await supabase.rpc("add_bookmark", {
+        _user_id: userID,
+        _tweet_id: tweetID,
+    });
+
+    console.info("Adding bookmark");
+    error && console.log(error);
+    if (!error) {
+        return;
+    }
+};
+
+export const removeBookmark = async (userID: string, tweetID: string) => {
+    const { error } = await supabase.rpc("remove_bookmark", {
+        _user_id: userID,
+        _tweet_id: tweetID,
+    });
+
+    console.info("Removing bookmark");
+    error && console.log(error);
+    if (!error) {
+        return;
+    }
+};
+
+export const clearBookmarks = async (userID: string) => {
+    const { error } = await supabase.rpc("clear_bookmarks", {
+        _user_id: userID,
+    });
+
+    console.info("Clearing bookmarks");
+    error && console.log(error);
+    if (!error) {
+        return;
+    }
+};
+
+export const getUserBookmarks = async (userID: string) => {
+    const { data, error } = await supabase.rpc("get_bookmarks", {
+        _user_id: userID,
+    });
+
+    console.info("Loading User Bookmarks");
     error && console.log(error);
     return data as TweetType[];
 };

@@ -1,5 +1,7 @@
+import { Menu } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+import { usePopper } from "react-popper";
 
 interface HeaderProps {
     variant: "home" | "notifications";
@@ -11,8 +13,46 @@ interface ProfileHeaderProps {
     tweetCount: number;
 }
 
-const Header: FC<HeaderProps | ProfileHeaderProps> = (props) => {
+interface BookmarksHeaderProps {
+    variant: "bookmarks";
+    username: string;
+    isBookmarkEmpty: boolean;
+    clearAllBookmarks: () => void;
+}
+
+const Header: FC<HeaderProps | ProfileHeaderProps | BookmarksHeaderProps> = (
+    props
+) => {
     const router = useRouter();
+    const [isSSR, setIsSSR] = useState(true);
+    useEffect(() => {
+        setIsSSR(false);
+    }, []);
+
+    const [moreReferenceElement, setMoreReferenceElement] = useState(null);
+    const [morePopperElement, setMorePopperElement] = useState(null);
+    const { styles: moreStyles, attributes: moreAttributes } = usePopper(
+        moreReferenceElement,
+        morePopperElement,
+        {
+            placement: "left",
+            strategy: "absolute",
+            modifiers: [
+                {
+                    name: "flip",
+                    options: {
+                        allowedAutoPlacements: ["top-end"],
+                        fallbackPlacements: ["bottom-end"],
+                        altBoundary: true,
+                    },
+                },
+                {
+                    name: "offset",
+                    options: { offset: [8, -37] },
+                },
+            ],
+        }
+    );
 
     switch (props.variant) {
         case "home":
@@ -31,6 +71,80 @@ const Header: FC<HeaderProps | ProfileHeaderProps> = (props) => {
                     </span>
                 </div>
             );
+
+        case "bookmarks":
+            const { username } = props;
+            return (
+                <div className="bg-theme-blur sticky top-0 z-10 flex h-[50px] w-full items-center justify-between p-[15px]">
+                    {!isSSR && (
+                        <>
+                            <div className="flex flex-col">
+                                <span className="py-0.5 text-[19px] font-bold leading-[23px] text-[#E9EAE7] light:text-[#0f1419]">
+                                    Bookmarks
+                                </span>
+                                <span className="text-[12px] leading-[15px] light:text-[#0f1419] dim:text-[#8B98A5] dark:text-[#71767B]">
+                                    @{username}
+                                </span>
+                            </div>
+                            {props.isBookmarkEmpty && (
+                                <Menu>
+                                    <Menu.Button
+                                        ref={setMoreReferenceElement}
+                                        as="div"
+                                        aria-label="More Options Menu"
+                                        className=""
+                                    >
+                                        <button
+                                            id="menu-button"
+                                            className="group w-fit rounded-full p-[8px] hover:bg-[#EFF3F4]/10 light:hover:bg-[#0F1419]/10"
+                                        >
+                                            <svg
+                                                className="w-min min-w-[17.5px] fill-[#EFF3F4] light:fill-[#0F1419]"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <g>
+                                                    <circle
+                                                        cx="5"
+                                                        cy="12"
+                                                        r="2"
+                                                    ></circle>
+                                                    <circle
+                                                        cx="12"
+                                                        cy="12"
+                                                        r="2"
+                                                    ></circle>
+                                                    <circle
+                                                        cx="19"
+                                                        cy="12"
+                                                        r="2"
+                                                    ></circle>
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </Menu.Button>
+                                    <Menu.Items
+                                        ref={setMorePopperElement}
+                                        style={moreStyles.popper}
+                                        {...moreAttributes.popper}
+                                        as="div"
+                                        className="bg-theme shadow-popup z-50 overflow-hidden rounded-[4px]"
+                                    >
+                                        <div
+                                            className="flex cursor-pointer flex-row items-center fill-[#F42121] p-[15px] text-sm leading-[19px] text-[#F42121] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#16181c]"
+                                            onClick={() =>
+                                                props.clearAllBookmarks()
+                                            }
+                                        >
+                                            <span>Clear all Bookmarks</span>
+                                        </div>
+                                    </Menu.Items>
+                                </Menu>
+                            )}
+                        </>
+                    )}
+                </div>
+            );
+
         case "profile":
             const { name, tweetCount } = props;
             return (

@@ -8,7 +8,11 @@ import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { useAuth } from "@context/Auth";
 import { useTweets } from "@context/Tweets";
-import { followUser, getUserTweets, unfollowUser } from "@utils/Database";
+import {
+    followUser,
+    getUserTweets,
+    unfollowUser,
+} from "@utils/Database";
 import toast from "react-hot-toast";
 
 interface TweetProps {
@@ -18,6 +22,7 @@ interface TweetProps {
     unfollow?: () => void;
     onUserProfile?: boolean;
     setUserTweets?: (value: SetStateAction<TweetType[]>) => void;
+    deleteOnBookmarkPage?: (userID: string, tweetID: string) => void;
 }
 
 const Tweet: FC<TweetProps> = ({
@@ -27,11 +32,13 @@ const Tweet: FC<TweetProps> = ({
     unfollow,
     onUserProfile,
     setUserTweets,
+    deleteOnBookmarkPage,
 }) => {
-    const { tweet, author } = data;
+    const { tweet, author, user } = data;
     const { currentUser } = useAuth();
 
-    const { deleteTweet, refreshTweets } = useTweets();
+    const { deleteTweet, refreshTweets, createBookmark, deleteBookmark } =
+        useTweets();
 
     const [moreReferenceElement, setMoreReferenceElement] = useState(null);
     const [morePopperElement, setMorePopperElement] = useState(null);
@@ -177,7 +184,8 @@ const Tweet: FC<TweetProps> = ({
                                                 () => {
                                                     onUserProfile &&
                                                         getUserTweets(
-                                                            currentUser?.username as string
+                                                            currentUser?.username as string,
+                                                            currentUser?.userID
                                                         ).then((data) => {
                                                             setUserTweets(data);
                                                         });
@@ -199,58 +207,63 @@ const Tweet: FC<TweetProps> = ({
                                 </Menu.Item>
                             ) : (
                                 <Menu.Item>
-                                    <div
-                                        className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
-                                        onClick={() =>
-                                            followingState != null
-                                                ? followingState
+                                    {(
+                                        followingState != null
+                                            ? followingState
+                                            : user?.followsAuthor
+                                    ) ? (
+                                        <div
+                                            className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
+                                            onClick={() =>
+                                                followingState != null
                                                     ? unfollow()
-                                                    : follow()
-                                                : data.isFollowedByRequest
-                                                ? unfollowUser(
-                                                      author.userid,
-                                                      currentUser.userid
-                                                  ).then(() => refreshTweets())
-                                                : followUser(
-                                                      author.userid,
-                                                      currentUser.userid
-                                                  ).then(() => refreshTweets())
-                                        }
-                                    >
-                                        {(
-                                            followingState != null
-                                                ? followingState
-                                                : data.isFollowedByRequest
-                                        ) ? (
-                                            <>
-                                                <svg
-                                                    viewBox="0 0 24 24"
-                                                    className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
-                                                >
-                                                    <g>
-                                                        <path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm12.586 3l-2.043-2.04 1.414-1.42L20 7.59l2.043-2.05 1.414 1.42L21.414 9l2.043 2.04-1.414 1.42L20 10.41l-2.043 2.05-1.414-1.42L18.586 9zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"></path>
-                                                    </g>
-                                                </svg>
-                                                <span>
-                                                    Unfollow @{author.username}
-                                                </span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <svg
-                                                    viewBox="0 0 24 24"
-                                                    className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
-                                                >
-                                                    <g>
-                                                        <path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm13 4v3h2v-3h3V8h-3V5h-2v3h-3v2h3zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"></path>
-                                                    </g>
-                                                </svg>
-                                                <span>
-                                                    Follow @{author.username}
-                                                </span>
-                                            </>
-                                        )}
-                                    </div>
+                                                    : unfollowUser(
+                                                          author.userid,
+                                                          currentUser.userid
+                                                      ).then(() =>
+                                                          refreshTweets()
+                                                      )
+                                            }
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                            >
+                                                <g>
+                                                    <path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm12.586 3l-2.043-2.04 1.414-1.42L20 7.59l2.043-2.05 1.414 1.42L21.414 9l2.043 2.04-1.414 1.42L20 10.41l-2.043 2.05-1.414-1.42L18.586 9zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"></path>
+                                                </g>
+                                            </svg>
+                                            <span>
+                                                Unfollow @{author.username}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
+                                            onClick={() =>
+                                                followingState != null
+                                                    ? follow()
+                                                    : followUser(
+                                                          author.userid,
+                                                          currentUser.userid
+                                                      ).then(() =>
+                                                          refreshTweets()
+                                                      )
+                                            }
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                            >
+                                                <g>
+                                                    <path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm13 4v3h2v-3h3V8h-3V5h-2v3h-3v2h3zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"></path>
+                                                </g>
+                                            </svg>
+                                            <span>
+                                                Follow @{author.username}
+                                            </span>
+                                        </div>
+                                    )}
                                 </Menu.Item>
                             )}
                         </Menu.Items>
@@ -361,7 +374,7 @@ const Tweet: FC<TweetProps> = ({
                             style={shareStyles.popper}
                             {...shareAttributes.popper}
                             as="div"
-                            className="bg-theme shadow-popup z-50 w-[210px] overflow-hidden rounded-[4px]"
+                            className="bg-theme shadow-popup z-50 min-w-[210px] overflow-hidden rounded-[4px]"
                         >
                             <Menu.Item>
                                 <div
@@ -387,17 +400,53 @@ const Tweet: FC<TweetProps> = ({
                                 </div>
                             </Menu.Item>
                             <Menu.Item>
-                                <div className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]">
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                {user.bookmarkedTweet ? (
+                                    <div
+                                        className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
+                                        onClick={() =>
+                                            window.location.pathname ==
+                                            "/bookmarks"
+                                                ? deleteOnBookmarkPage(
+                                                      currentUser.userid,
+                                                      tweet.tweet_id
+                                                  )
+                                                : deleteBookmark(
+                                                      currentUser.userid,
+                                                      tweet.tweet_id
+                                                  )
+                                        }
                                     >
-                                        <g>
-                                            <path d="M17 3V0h2v3h3v2h-3v3h-2V5h-3V3h3zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V11h2v11.94l-8-5.71-8 5.71V4.5C4 3.12 5.119 2 6.5 2h4.502v2H6.5z"></path>
-                                        </g>
-                                    </svg>
-                                    <span>Bookmark</span>
-                                </div>
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                        >
+                                            <g>
+                                                <path d="M16.586 4l-2.043-2.04L15.957.54 18 2.59 20.043.54l1.414 1.42L19.414 4l2.043 2.04-1.414 1.42L18 5.41l-2.043 2.05-1.414-1.42L16.586 4zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V11h2v11.94l-8-5.71-8 5.71V4.5C4 3.12 5.119 2 6.5 2h4.502v2H6.5z"></path>
+                                            </g>
+                                        </svg>
+                                        <span>Remove Tweet from Bookmark</span>
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
+                                        onClick={() =>
+                                            createBookmark(
+                                                currentUser.userid,
+                                                tweet.tweet_id
+                                            )
+                                        }
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            className="mr-[11px] w-[17.5px] max-w-full light:fill-[#536571] dim:fill-[#8B98A5] dark:fill-[#71767B]"
+                                        >
+                                            <g>
+                                                <path d="M17 3V0h2v3h3v2h-3v3h-2V5h-3V3h3zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V11h2v11.94l-8-5.71-8 5.71V4.5C4 3.12 5.119 2 6.5 2h4.502v2H6.5z"></path>
+                                            </g>
+                                        </svg>
+                                        <span>Bookmark</span>
+                                    </div>
+                                )}
                             </Menu.Item>
                         </Menu.Items>
                     </Menu>

@@ -21,12 +21,12 @@ const MenuButton: FC<{
     as?: "link" | "div";
 }> = ({ type, as: buttonType = "link" }) => {
     const [buttonData, setButtonData] = useState<MenuButton>();
-    const { session, currentUser } = useAuth();
+    const { currentUser } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        session && setButtonData(getButtonData(type, currentUser));
-    }, [session, type, currentUser]);
+        currentUser && setButtonData(getButtonData(type, currentUser));
+    }, [currentUser, type]);
 
     const Button = () => {
         return (

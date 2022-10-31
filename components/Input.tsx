@@ -3,7 +3,6 @@ import {
     forwardRef,
     InputHTMLAttributes,
     TextareaHTMLAttributes,
-    DetailedHTMLProps,
 } from "react";
 
 type passwordState = "shown" | "hidden" | "other";

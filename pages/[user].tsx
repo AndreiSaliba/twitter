@@ -12,10 +12,10 @@ import {
     getUserTweets,
 } from "@utils/Database";
 import { TweetType, UserProfile } from "@utils/types";
+import HomeLayout from "@layouts/HomeLayout";
 import Header from "@components/Header";
 import Button from "@components/Button";
 import Tweet from "@components/Tweet";
-import HomeLayout from "@layouts/HomeLayout";
 
 const User = () => {
     const [userProfile, setUserProfile] = useState<UserProfile>();
@@ -71,7 +71,9 @@ const User = () => {
     // Get User Tweets
     useEffect(() => {
         if (user && session) {
-            getUserTweets(user as string).then((data) => setTweets(data));
+            getUserTweets(user as string, currentUser?.userID).then((data) =>
+                setTweets(data)
+            );
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
