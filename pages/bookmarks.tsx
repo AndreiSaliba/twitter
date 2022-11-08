@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
-import Header from "@components/Header";
-import { useAuth } from "@context/Auth";
 import { useRouter } from "next/router";
-import HomeLayout from "@layouts/HomeLayout";
-import {
-    clearBookmarks,
-    getUserBookmarks,
-    removeBookmark,
-} from "@utils/Database";
-import { TweetType } from "@utils/types";
-import Tweet from "@components/Tweet";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { useAuth } from "@context/Auth";
+import { TweetType } from "@utils/types";
+import DB from "@utils/Database";
+import HomeLayout from "@layouts/HomeLayout";
+import Header from "@components/Header";
+import Tweet from "@components/Tweet";
 
 const Bookmarks = () => {
     const [bookmarks, setBookmarks] = useState<TweetType[]>();
@@ -24,17 +20,39 @@ const Bookmarks = () => {
 
     useEffect(() => {
         currentUser &&
-            getUserBookmarks(currentUser?.userid).then((data) =>
+            DB.getUserBookmarks(currentUser?.userid).then((data) =>
                 setBookmarks(data)
             );
     }, [currentUser]);
 
-    const clearAllBookmarks = () => {
-        clearBookmarks(currentUser?.userid).then(() => setBookmarks(null));
+    const follow = (userID: string) => {
+        DB.followUser(userID, currentUser?.userid);
+        setBookmarks((prevState) => {
+            let temp = prevState;
+            temp.forEach((tweet) => (tweet.user.followsAuthor = true));
+            return temp;
+        });
     };
 
-    const deleteBookmark = (userID: string, tweetID: string) => {
-        removeBookmark(userID, tweetID).then(() => {
+    const unfollow = (userID: string) => {
+        DB.unfollowUser(userID, currentUser?.userid);
+        setBookmarks((prevState) => {
+            let temp = prevState;
+            temp.forEach((tweet) => (tweet.user.followsAuthor = false));
+            return temp;
+        });
+    };
+
+    const deleteTweet = (tweetID: string) => {
+        DB.deleteTweet(tweetID).then(() => {
+            let temp = [...bookmarks];
+            temp = temp.filter((tweet) => tweet.tweet.tweet_id != tweetID);
+            setBookmarks(temp);
+        });
+    };
+
+    const removeBookmark = (userID: string, tweetID: string) => {
+        DB.removeBookmark(userID, tweetID).then(() => {
             const temp = [...bookmarks];
             const tweetIndex = temp.findIndex(
                 (tweet) => tweet.tweet.tweet_id == tweetID
@@ -43,6 +61,10 @@ const Bookmarks = () => {
             setBookmarks(temp);
             toast("Tweet removed from your bookmarks");
         });
+    };
+
+    const clearAllBookmarks = () => {
+        DB.clearBookmarks(currentUser?.userid).then(() => setBookmarks(null));
     };
 
     return (
@@ -58,8 +80,12 @@ const Bookmarks = () => {
                     bookmarks.map((tweet, index) => (
                         <Tweet
                             key={index}
+                            page="Bookmarks"
                             data={tweet}
-                            deleteOnBookmarkPage={deleteBookmark}
+                            follow={follow}
+                            unfollow={unfollow}
+                            deleteTweet={deleteTweet}
+                            removeBookmark={removeBookmark}
                         />
                     ))
                 ) : (
@@ -77,7 +103,7 @@ const Bookmarks = () => {
                                 <span className="mb-[8px] text-[29px] font-extrabold leading-[34px] light:text-[#0F1419] dim:text-[#F7F9F9] dark:text-[#E7E9EA]">
                                     Save Tweets for later
                                 </span>
-                                <span className="mb-[27px] text-sm leading-[19px] dim:text-[#8B98A5] dark:text-[#71767B] light:text-[#536471]">
+                                <span className="mb-[27px] text-sm leading-[19px] light:text-[#536471] dim:text-[#8B98A5] dark:text-[#71767B]">
                                     Don’t let the good ones fly away! Bookmark
                                     Tweets to easily find them again in the
                                     future.

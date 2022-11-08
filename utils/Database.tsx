@@ -81,7 +81,7 @@ export const unfollowUser = async (followedUser: string, follower: string) => {
     return;
 };
 
-export const create_tweet = async (authorID: string, text: string) => {
+export const createTweet = async (authorID: string, text: string) => {
     const { error } = await supabase.rpc("create_tweet", {
         _text: text,
         _author_id: authorID,
@@ -90,6 +90,12 @@ export const create_tweet = async (authorID: string, text: string) => {
 
     console.info("Creating tweet");
     error && console.log(error);
+    return;
+};
+
+export const deleteTweet = async (tweetID: string) => {
+    console.info("Delete Tweet: " + tweetID);
+    await supabase.from("tweets").delete().eq("tweet_id", tweetID);
     return;
 };
 
@@ -117,8 +123,17 @@ export const getUserTweets = async (
     return data as TweetType[];
 };
 
+export const getUserBookmarks = async (userID: string) => {
+    const { data, error } = await supabase.rpc("get_bookmarks", {
+        _user_id: userID,
+    });
+
+    console.info("Loading User Bookmarks");
+    error && console.log(error);
+    return data as TweetType[];
+};
+
 export const addBookmark = async (userID: string, tweetID: string) => {
-    console.log(userID, tweetID);
     const { error } = await supabase.rpc("add_bookmark", {
         _user_id: userID,
         _tweet_id: tweetID,
@@ -156,12 +171,20 @@ export const clearBookmarks = async (userID: string) => {
     }
 };
 
-export const getUserBookmarks = async (userID: string) => {
-    const { data, error } = await supabase.rpc("get_bookmarks", {
-        _user_id: userID,
-    });
-
-    console.info("Loading User Bookmarks");
-    error && console.log(error);
-    return data as TweetType[];
+const DB = {
+    getUser,
+    getUserByID,
+    updateUserProfile,
+    followUser,
+    unfollowUser,
+    createTweet,
+    deleteTweet,
+    getTweets,
+    getUserTweets,
+    getUserBookmarks,
+    addBookmark,
+    removeBookmark,
+    clearBookmarks,
 };
+
+export default DB;

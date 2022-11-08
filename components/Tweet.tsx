@@ -1,44 +1,43 @@
-import { FC, SetStateAction, useState } from "react";
-import Image from "next/image";
-import { TweetType } from "@utils/types";
-import moment from "moment";
-import { Linkify, LinkifyCore } from "react-easy-linkify";
-import Link from "next/link";
+import { FC, useState } from "react";
 import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { useAuth } from "@context/Auth";
-import { useTweets } from "@context/Tweets";
-import {
-    followUser,
-    getUserTweets,
-    unfollowUser,
-} from "@utils/Database";
 import toast from "react-hot-toast";
+import Image from "next/image";
+import Link from "next/link";
+import moment from "moment";
+import { useAuth } from "@context/Auth";
+import { TweetType } from "@utils/types";
+import { Linkify, LinkifyCore } from "react-easy-linkify";
 
 interface TweetProps {
     data: TweetType;
-    followingState?: boolean;
-    follow?: () => void;
-    unfollow?: () => void;
-    onUserProfile?: boolean;
-    setUserTweets?: (value: SetStateAction<TweetType[]>) => void;
-    deleteOnBookmarkPage?: (userID: string, tweetID: string) => void;
+    follow: (userID: string) => void;
+    unfollow: (userID: string) => void;
+    deleteTweet: (tweet_id: string) => void;
+    removeBookmark: (userID: string, tweetID: string) => void;
 }
 
-const Tweet: FC<TweetProps> = ({
-    data,
-    followingState,
-    follow,
-    unfollow,
-    onUserProfile,
-    setUserTweets,
-    deleteOnBookmarkPage,
-}) => {
+interface HomePageProps extends TweetProps {
+    page: "Home";
+    addBookmark: (userID: string, tweetID: string) => void;
+}
+
+interface UserPageProps extends TweetProps {
+    page: "User";
+    addBookmark: (userID: string, tweetID: string) => void;
+}
+
+interface BookmarksPageProps extends TweetProps {
+    page: "Bookmarks";
+}
+
+const Tweet: FC<HomePageProps | UserPageProps | BookmarksPageProps> = (
+    props
+) => {
+    const { data, follow, unfollow } = props;
+
     const { tweet, author, user } = data;
     const { currentUser } = useAuth();
-
-    const { deleteTweet, refreshTweets, createBookmark, deleteBookmark } =
-        useTweets();
 
     const [moreReferenceElement, setMoreReferenceElement] = useState(null);
     const [morePopperElement, setMorePopperElement] = useState(null);
@@ -180,17 +179,7 @@ const Tweet: FC<TweetProps> = ({
                                     <div
                                         className="flex cursor-pointer flex-row items-center fill-[#F42121] p-[15px] text-sm leading-[19px] text-[#F42121] light:hover:bg-[#f7f9f9] dim:hover:bg-[#1e2732] dark:hover:bg-[#080808]"
                                         onClick={() =>
-                                            deleteTweet(tweet.tweet_id).then(
-                                                () => {
-                                                    onUserProfile &&
-                                                        getUserTweets(
-                                                            currentUser?.username as string,
-                                                            currentUser?.userID
-                                                        ).then((data) => {
-                                                            setUserTweets(data);
-                                                        });
-                                                }
-                                            )
+                                            props?.deleteTweet(tweet.tweet_id)
                                         }
                                     >
                                         <svg
@@ -207,22 +196,11 @@ const Tweet: FC<TweetProps> = ({
                                 </Menu.Item>
                             ) : (
                                 <Menu.Item>
-                                    {(
-                                        followingState != null
-                                            ? followingState
-                                            : user?.followsAuthor
-                                    ) ? (
+                                    {user?.followsAuthor ? (
                                         <div
                                             className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
                                             onClick={() =>
-                                                followingState != null
-                                                    ? unfollow()
-                                                    : unfollowUser(
-                                                          author.userid,
-                                                          currentUser.userid
-                                                      ).then(() =>
-                                                          refreshTweets()
-                                                      )
+                                                unfollow(author.userid)
                                             }
                                         >
                                             <svg
@@ -241,14 +219,7 @@ const Tweet: FC<TweetProps> = ({
                                         <div
                                             className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
                                             onClick={() =>
-                                                followingState != null
-                                                    ? follow()
-                                                    : followUser(
-                                                          author.userid,
-                                                          currentUser.userid
-                                                      ).then(() =>
-                                                          refreshTweets()
-                                                      )
+                                                follow(author.userid)
                                             }
                                         >
                                             <svg
@@ -404,16 +375,10 @@ const Tweet: FC<TweetProps> = ({
                                     <div
                                         className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
                                         onClick={() =>
-                                            window.location.pathname ==
-                                            "/bookmarks"
-                                                ? deleteOnBookmarkPage(
-                                                      currentUser.userid,
-                                                      tweet.tweet_id
-                                                  )
-                                                : deleteBookmark(
-                                                      currentUser.userid,
-                                                      tweet.tweet_id
-                                                  )
+                                            props?.removeBookmark(
+                                                currentUser.userid,
+                                                tweet.tweet_id
+                                            )
                                         }
                                     >
                                         <svg
@@ -430,7 +395,8 @@ const Tweet: FC<TweetProps> = ({
                                     <div
                                         className="flex cursor-pointer flex-row items-center p-[15px] text-sm leading-[19px] light:text-[#0F1419] light:hover:bg-[#f7f9f9] dim:text-[#F7F9F9] dim:hover:bg-[#1e2732] dark:text-[#E7E9EA] dark:hover:bg-[#080808]"
                                         onClick={() =>
-                                            createBookmark(
+                                            props?.page !== "Bookmarks" &&
+                                            props?.addBookmark(
                                                 currentUser.userid,
                                                 tweet.tweet_id
                                             )

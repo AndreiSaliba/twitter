@@ -2,16 +2,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/future/image";
+import toast from "react-hot-toast";
 import { Tab } from "@headlessui/react";
 import { Linkify, LinkifyCore } from "react-easy-linkify";
-import { useAuth } from "@context/Auth";
-import {
-    getUser,
-    followUser,
-    unfollowUser,
-    getUserTweets,
-} from "@utils/Database";
+import DB, { getUser, getUserTweets } from "@utils/Database";
 import { TweetType, UserProfile } from "@utils/types";
+import { useAuth } from "@context/Auth";
 import HomeLayout from "@layouts/HomeLayout";
 import Header from "@components/Header";
 import Button from "@components/Button";
@@ -19,7 +15,6 @@ import Tweet from "@components/Tweet";
 
 const User = () => {
     const [userProfile, setUserProfile] = useState<UserProfile>();
-    const [sessionUserProfile, setSessionUserProfile] = useState<UserProfile>();
     const [following, setFollowing] = useState<boolean>(false);
     const [tweets, setTweets] = useState<TweetType[]>();
 
@@ -33,14 +28,13 @@ const User = () => {
     }, [session, router]);
 
     useEffect(() => {
-        if (user && session) {
+        if (session && user) {
             if (
                 currentUser?.username.toLowerCase() ===
                 (user as string).toLowerCase()
             ) {
                 refreshCurrentUser();
             } else {
-                setSessionUserProfile(currentUser);
                 getUser(user as string, currentUser?.username).then((data) => {
                     if (data?.profile) {
                         setUserProfile(data.profile);
@@ -50,11 +44,16 @@ const User = () => {
                     }
                 });
             }
+
+            if (user && currentUser) {
+                getUserTweets(user as string, currentUser?.userid).then(
+                    (data) => setTweets(data)
+                );
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
-    // Get Current User profile page
     useEffect(() => {
         if (currentUser && user) {
             if (
@@ -63,41 +62,83 @@ const User = () => {
             ) {
                 setUserProfile(currentUser);
             }
-            setSessionUserProfile(currentUser);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUser]);
 
-    // Get User Tweets
-    useEffect(() => {
-        if (user && session) {
-            getUserTweets(user as string, currentUser?.userID).then((data) =>
-                setTweets(data)
-            );
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
-
-    LinkifyCore.PluginManager.enableMention();
-    LinkifyCore.PluginManager.enableHashtag();
-
-    const follow = () => {
-        followUser(userProfile.userid, sessionUserProfile.userid);
+    const follow = (userID: string) => {
+        DB.followUser(userID, currentUser?.userid);
         setUserProfile((prevState) => ({
             ...prevState,
             followers_count: userProfile.followers_count + 1,
         }));
         setFollowing(true);
+        setTweets((prevState) => {
+            let temp = prevState;
+            temp.forEach((tweet) => (tweet.user.followsAuthor = true));
+            return temp;
+        });
     };
 
-    const unfollow = () => {
-        unfollowUser(userProfile.userid, sessionUserProfile.userid);
+    const unfollow = (userID: string) => {
+        DB.unfollowUser(userID, currentUser?.userid);
         setUserProfile((prevState) => ({
             ...prevState,
             followers_count: userProfile.followers_count - 1,
         }));
         setFollowing(false);
+        setTweets((prevState) => {
+            let temp = prevState;
+            temp.forEach((tweet) => (tweet.user.followsAuthor = false));
+            return temp;
+        });
     };
+
+    const deleteTweet = (tweetID: string) => {
+        DB.deleteTweet(tweetID).then(() => {
+            let temp = [...tweets];
+            temp = temp.filter((tweet) => tweet.tweet.tweet_id != tweetID);
+            setTweets(temp);
+        });
+    };
+
+    const addBookark = (userID: string, tweetID: string) => {
+        DB.addBookmark(userID, tweetID).then(() => {
+            setTweets((prevState) => {
+                let temp = prevState;
+                const index = temp.findIndex(
+                    (tweet) => tweet.tweet.tweet_id == tweetID
+                );
+                temp[index].user.bookmarkedTweet = true;
+                return temp;
+            });
+            toast(
+                <div>
+                    <span>Tweet added to your bookmarks </span>
+                    <Link href={"/bookmarks"} className="">
+                        <a className="ml-4 font-medium hover:underline">View</a>
+                    </Link>
+                </div>
+            );
+        });
+    };
+
+    const removeBookmark = (userID: string, tweetID: string) => {
+        DB.removeBookmark(userID, tweetID).then(() => {
+            setTweets((prevState) => {
+                let temp = prevState;
+                const index = temp.findIndex(
+                    (tweet) => tweet.tweet.tweet_id == tweetID
+                );
+                temp[index].user.bookmarkedTweet = false;
+                return temp;
+            });
+            toast("Tweet removed from your bookmarks");
+        });
+    };
+
+    LinkifyCore.PluginManager.enableMention();
+    LinkifyCore.PluginManager.enableHashtag();
 
     return (
         <>
@@ -148,8 +189,7 @@ const User = () => {
 
                     <div className="mb-[11px] w-full px-[15px] pt-[11px] ">
                         <div className="flex h-[68px] w-full justify-end">
-                            {userProfile.userid ===
-                            sessionUserProfile.userid ? (
+                            {userProfile.userid === currentUser.userid ? (
                                 <Link
                                     href={
                                         router.pathname === "/[user]"
@@ -196,11 +236,19 @@ const User = () => {
                                         </svg>
                                     </div>
                                     {following ? (
-                                        <div onClick={unfollow}>
+                                        <div
+                                            onClick={() =>
+                                                unfollow(userProfile.userid)
+                                            }
+                                        >
                                             <Button variant="following" />
                                         </div>
                                     ) : (
-                                        <div onClick={follow}>
+                                        <div
+                                            onClick={() =>
+                                                follow(userProfile.userid)
+                                            }
+                                        >
                                             <Button variant="follow" />
                                         </div>
                                     )}
@@ -489,12 +537,13 @@ const User = () => {
                                     tweets.map((tweet, index) => (
                                         <Tweet
                                             key={index}
+                                            page="User"
                                             data={tweet}
-                                            followingState={following}
                                             follow={follow}
                                             unfollow={unfollow}
-                                            onUserProfile={true}
-                                            setUserTweets={setTweets}
+                                            deleteTweet={deleteTweet}
+                                            addBookmark={addBookark}
+                                            removeBookmark={removeBookmark}
                                         />
                                     ))}
                             </Tab.Panel>
@@ -503,12 +552,13 @@ const User = () => {
                                     tweets.map((tweet, index) => (
                                         <Tweet
                                             key={index}
+                                            page="User"
                                             data={tweet}
-                                            followingState={following}
                                             follow={follow}
                                             unfollow={unfollow}
-                                            onUserProfile={true}
-                                            setUserTweets={setTweets}
+                                            deleteTweet={deleteTweet}
+                                            addBookmark={addBookark}
+                                            removeBookmark={removeBookmark}
                                         />
                                     ))}
                             </Tab.Panel>

@@ -1,16 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@context/Auth";
 import Button from "./Button";
-import { useTweets } from "@context/Tweets";
 
-const ComposeTweet = () => {
+interface ComposeTweetProps {
+    createTweet: (authorID: string, tweetText: string) => void;
+}
+
+const ComposeTweet: FC<ComposeTweetProps> = (props) => {
     const { currentUser } = useAuth();
-    const { createTweet } = useTweets();
     const composeRef = useRef(null);
-
     const [composeTweetInput, setComposeTweetInput] = useState<string>();
     const [isSSR, setIsSSR] = useState(true);
+
     useEffect(() => {
         setIsSSR(false);
     }, []);
@@ -180,7 +182,7 @@ const ComposeTweet = () => {
                             className="mr-0.5 -mb-px h-[34px] w-full max-w-[71.5px] disabled:opacity-50"
                             textClassName="text-[14px]"
                             onClick={() => {
-                                createTweet(
+                                props?.createTweet(
                                     currentUser?.userid,
                                     composeTweetInput
                                 );
