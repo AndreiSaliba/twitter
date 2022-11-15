@@ -7,6 +7,8 @@ import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
 import DisplayModal from "@components/modals/DisplayModal";
 import "@styles/globals.css";
+import { register } from "timeago.js";
+import { tweetTimeFormat } from "@utils/FormatTime";
 
 type ComponentWithPageLayout = AppProps & {
     Component: AppProps["Component"] & {
@@ -18,6 +20,8 @@ export default function MyApp({
     Component,
     pageProps,
 }: ComponentWithPageLayout) {
+    register("tweet-format", tweetTimeFormat);
+
     return (
         <>
             <Head>

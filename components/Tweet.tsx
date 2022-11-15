@@ -4,10 +4,10 @@ import { usePopper } from "react-popper";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
-import moment from "moment";
 import { useAuth } from "@context/Auth";
 import { TweetType } from "@utils/types";
 import { Linkify, LinkifyCore } from "react-easy-linkify";
+import { formatDate } from "@utils/FormatTime";
 
 interface TweetProps {
     data: TweetType;
@@ -139,7 +139,7 @@ const Tweet: FC<HomePageProps | UserPageProps | BookmarksPageProps> = (
                             </Link>
                             <span className="truncate px-1">·</span>
                             <span>
-                                {moment.utc(tweet.created_at).fromNow(true)}
+                                {formatDate(new Date(tweet?.created_at))}
                             </span>
                         </span>
                     </div>
