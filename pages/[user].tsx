@@ -75,7 +75,7 @@ const User = () => {
         setFollowing(true);
         setTweets((prevState) => {
             let temp = prevState;
-            temp.forEach((tweet) => (tweet.user.followsAuthor = true));
+            temp && temp.forEach((tweet) => (tweet.user.followsAuthor = true));
             return temp;
         });
     };
@@ -89,7 +89,7 @@ const User = () => {
         setFollowing(false);
         setTweets((prevState) => {
             let temp = prevState;
-            temp.forEach((tweet) => (tweet.user.followsAuthor = false));
+            temp && temp.forEach((tweet) => (tweet.user.followsAuthor = false));
             return temp;
         });
     };

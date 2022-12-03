@@ -43,7 +43,11 @@ const Home = () => {
         DB.followUser(userID, currentUser?.userid);
         setTweets((prevState) => {
             let temp = prevState;
-            temp.forEach((tweet) => (tweet.user.followsAuthor = true));
+            temp &&
+                temp.forEach((tweet) => {
+                    if (tweet.tweet.author_id === userID)
+                        tweet.user.followsAuthor = true;
+                });
             return temp;
         });
     };
@@ -51,7 +55,11 @@ const Home = () => {
         DB.unfollowUser(userID, currentUser?.userid);
         setTweets((prevState) => {
             let temp = prevState;
-            temp.forEach((tweet) => (tweet.user.followsAuthor = false));
+            temp &&
+                temp.forEach((tweet) => {
+                    if (tweet.tweet.author_id === userID)
+                        tweet.user.followsAuthor = false;
+                });
             return temp;
         });
     };

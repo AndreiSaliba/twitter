@@ -29,7 +29,7 @@ const Bookmarks = () => {
         DB.followUser(userID, currentUser?.userid);
         setBookmarks((prevState) => {
             let temp = prevState;
-            temp.forEach((tweet) => (tweet.user.followsAuthor = true));
+            temp && temp.forEach((tweet) => (tweet.user.followsAuthor = true));
             return temp;
         });
     };
@@ -38,7 +38,7 @@ const Bookmarks = () => {
         DB.unfollowUser(userID, currentUser?.userid);
         setBookmarks((prevState) => {
             let temp = prevState;
-            temp.forEach((tweet) => (tweet.user.followsAuthor = false));
+            temp && temp.forEach((tweet) => (tweet.user.followsAuthor = false));
             return temp;
         });
     };
