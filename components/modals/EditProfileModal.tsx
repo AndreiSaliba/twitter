@@ -38,6 +38,7 @@ function EditProfileModal() {
         bannerImageUrl,
     }) => {
         if (
+            website &&
             !website.match(
                 /^(https?:\/\/)?([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/
             )
