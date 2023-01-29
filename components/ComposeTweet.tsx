@@ -9,13 +9,76 @@ interface ComposeTweetProps {
 
 const ComposeTweet: FC<ComposeTweetProps> = (props) => {
     const { currentUser } = useAuth();
-    const composeRef = useRef(null);
-    const [composeTweetInput, setComposeTweetInput] = useState<string>();
     const [isSSR, setIsSSR] = useState(true);
 
     useEffect(() => {
         setIsSSR(false);
     }, []);
+
+    const [composeValue, setComposeValue] = useState<string>("");
+    const composeRef = useRef(null);
+    const excessRef = useRef(null);
+    const maxLength = 280;
+
+    const handleChange = (e) => {
+        let inputValue = e.target.innerHTML;
+        if (inputValue.length > maxLength) {
+            if (!excessRef.current) {
+                excessRef.current = document.createElement("span");
+            }
+            const inputValueNode = new DOMParser().parseFromString(
+                inputValue,
+                "text/html"
+            );
+            const inputValueText = inputValueNode.body.textContent;
+            composeRef.current.textContent = inputValueText.slice(0, maxLength);
+            excessRef.current.textContent = inputValueText.slice(maxLength);
+            excessRef.current.classList.add("bg-[#8a0d20]");
+            e.target.appendChild(excessRef.current);
+
+            inputValue = e.target.innerHTML;
+        } else {
+            if (excessRef.current) {
+                excessRef.current.remove();
+                excessRef.current = null;
+            }
+        }
+
+        setComposeValue(inputValue);
+        setCursor();
+    };
+
+    const setCursor = () => {
+        if (composeRef.current && composeRef.current.childNodes[0]) {
+            const range = document.createRange();
+            const sel = window.getSelection();
+
+            const underLimit = composeRef?.current?.childNodes[0];
+            const overLimit =
+                composeRef?.current?.childNodes[1]?.childNodes[0] || null;
+
+            const valueLength =
+                underLimit.textContent.length +
+                (overLimit?.textContent?.length || 0);
+
+            if (valueLength > maxLength) {
+                range.setStart(overLimit, overLimit?.textContent?.length);
+            } else {
+                range.setStart(underLimit, underLimit?.textContent?.length);
+            }
+
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    };
+
+    useEffect(() => {
+        if (composeRef.current?.childNodes[0]?.nodeType) {
+            setCursor();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [composeValue]);
 
     return (
         <div className="flex h-min min-h-[102px] w-full flex-row items-start border-b px-[15px] pt-1 pb-[13px] light:border-[#eff3f4] dim:border-[#38444d] dark:border-[#2f3336]">
@@ -45,15 +108,10 @@ const ComposeTweet: FC<ComposeTweetProps> = (props) => {
                         className="peer inline-block max-h-[712px] w-full max-w-[511px] overflow-y-scroll whitespace-pre-wrap break-words py-1 pl-0.5 text-[19px] leading-[23px] outline-none before:empty:content-[attr(placeholder)] light:text-[#0F1419] light:before:empty:text-[#8B98A5] dim:text-[#F7F9F9] dim:before:empty:text-[#8B98A5] dark:text-[#E7E9EA] dark:before:empty:text-[#71767B]"
                         placeholder="What&#x2019;s happening?"
                         contentEditable
-                        onInput={(e) =>
-                            setComposeTweetInput(e.currentTarget.innerText)
-                        }
-                        onPaste={(e) =>
-                            setComposeTweetInput(e.currentTarget.innerText)
-                        }
-                        onCut={(e) =>
-                            setComposeTweetInput(e.currentTarget.innerText)
-                        }
+                        onInput={(e) => {
+                            handleChange(e);
+                        }}
+                        dangerouslySetInnerHTML={{ __html: composeValue }}
                     ></span>
 
                     <div className="-ml-2 mt-[11px] h-px w-full light:peer-focus:bg-[#eff3f4] dim:peer-focus:bg-[#38444d] dark:peer-focus:bg-[#2f3336]" />
@@ -184,17 +242,17 @@ const ComposeTweet: FC<ComposeTweetProps> = (props) => {
                             onClick={() => {
                                 props?.createTweet(
                                     currentUser?.userid,
-                                    composeTweetInput
+                                    composeValue
                                 );
-                                setComposeTweetInput("");
+                                setComposeValue("");
                                 if (composeRef?.current?.innerText) {
                                     composeRef.current.innerText = "";
                                 }
                             }}
                             disabled={
-                                composeTweetInput == null ||
-                                composeTweetInput == "" ||
-                                composeTweetInput.length > 260
+                                composeValue == null ||
+                                composeValue == "" ||
+                                composeValue.length > maxLength
                             }
                         >
                             Tweet
