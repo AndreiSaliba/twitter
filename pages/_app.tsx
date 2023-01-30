@@ -9,6 +9,7 @@ import DisplayModal from "@components/modals/DisplayModal";
 import "@styles/globals.css";
 import { register } from "timeago.js";
 import { tweetTimeFormat } from "@utils/FormatTime";
+import 'react-tooltip/dist/react-tooltip.css'
 
 type ComponentWithPageLayout = AppProps & {
     Component: AppProps["Component"] & {

@@ -8,6 +8,9 @@ import { useAuth } from "@context/Auth";
 import { TweetType } from "@utils/types";
 import { Linkify, LinkifyCore } from "react-easy-linkify";
 import { formatDate } from "@utils/FormatTime";
+import { Tooltip } from "react-tooltip";
+import { format } from "date-fns";
+import { useTheme } from "@context/Theme";
 
 interface TweetProps {
     data: TweetType;
@@ -38,6 +41,7 @@ const Tweet: FC<HomePageProps | UserPageProps | BookmarksPageProps> = (
 
     const { tweet, author, user } = data;
     const { currentUser } = useAuth();
+    const { theme } = useTheme();
 
     const [moreReferenceElement, setMoreReferenceElement] = useState(null);
     const [morePopperElement, setMorePopperElement] = useState(null);
@@ -138,9 +142,34 @@ const Tweet: FC<HomePageProps | UserPageProps | BookmarksPageProps> = (
                                 </a>
                             </Link>
                             <span className="truncate px-1">·</span>
-                            <span>
+                            <span
+                                id={`created_at_${tweet?.tweet_id}`}
+                                className="cursor-pointer"
+                            >
                                 {formatDate(new Date(tweet?.created_at))}
                             </span>
+                            <Tooltip
+                                anchorId={`created_at_${tweet?.tweet_id}`}
+                                content={format(
+                                    new Date(tweet?.created_at),
+                                    "h:m a · MMM d, Y"
+                                )}
+                                place="bottom"
+                                noArrow
+                                offset={3}
+                                style={{
+                                    backgroundColor:
+                                        theme == "dark-theme" ||
+                                        theme == "dim-theme"
+                                            ? "#4b5c6b"
+                                            : "#636363",
+                                    fontSize: 10,
+                                    paddingLeft: 3,
+                                    paddingRight: 3,
+                                    paddingTop: 0,
+                                    paddingBottom: 0,
+                                }}
+                            />
                         </span>
                     </div>
 
