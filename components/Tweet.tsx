@@ -152,7 +152,7 @@ const Tweet: FC<HomePageProps | UserPageProps | BookmarksPageProps> = (
                                 anchorId={`created_at_${tweet?.tweet_id}`}
                                 content={format(
                                     new Date(tweet?.created_at),
-                                    "h:m a · MMM d, Y"
+                                    "h:mm a · MMM d, Y"
                                 )}
                                 place="bottom"
                                 noArrow

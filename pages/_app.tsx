@@ -7,9 +7,10 @@ import { ThemeProvider } from "@context/Theme";
 import { AuthProvider } from "@context/Auth";
 import DisplayModal from "@components/modals/DisplayModal";
 import "@styles/globals.css";
+import "../node_modules/draft-js/dist/Draft.css";
 import { register } from "timeago.js";
 import { tweetTimeFormat } from "@utils/FormatTime";
-import 'react-tooltip/dist/react-tooltip.css'
+import "react-tooltip/dist/react-tooltip.css";
 
 type ComponentWithPageLayout = AppProps & {
     Component: AppProps["Component"] & {
